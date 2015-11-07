@@ -1,9 +1,12 @@
+// Author:          Zachary A Trudo
+// Changelog:       Initial Creation - Nov, 6 2015
 #ifndef __MIPSREGISTERS_H__
 #define __MIPSREGISTERS_H__
 #include <stdlib.h>
 #include <stdio.h>
 
-
+// While mips registers could be easily represented as an array of 32 ints, this way we can 
+// reference them in a similar fasion to how they would be referenced in assembly.
 struct registers
 {
     // Zero is always zero. 
@@ -57,7 +60,7 @@ struct registers
 
     // Return Address - Unused
     int ra;
-} mipsRegisters = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+};
 
 typedef struct registers mipsRegister;
 
