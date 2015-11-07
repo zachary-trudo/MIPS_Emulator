@@ -31,6 +31,7 @@ int MIPS_AND(const int rs, const int rt);
 int MIPS_OR(const int rs, const int rt);
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
+// According to mips documentation brach operations use the Subtract functions to do the comparison. 
 int MIPS_BEQ(int *stored, int *temporary, char *LABEL, int *nextInstruction);
 int MIPS_BGTZ(int *stored, char *LABEL, int *nextInstruction);
 int MIPS_BLTZ(int *stored, char *LABEL, int *nextInstruction);

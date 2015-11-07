@@ -9,7 +9,7 @@
 // reference them in a similar fasion to how they would be referenced in assembly.
 struct registers
 {
-    // Zero is always zero. 
+    // Zero is always zero.
     const int zero;
 
     // Aseembler Temporary
@@ -25,7 +25,8 @@ struct registers
     int a2;
     int a3;
 
-    // Temporary Registers - Supposed to be 0'd after use;
+    // Temporary Registers - Supposed to be 0'd after use
+    // Not sure if we'll be bothering with zeroing.
     int t0;
     int t1;
     int t2;
@@ -55,10 +56,10 @@ struct registers
     // Global Pointer - Unused
     int gp;
 
-    // Stack poiunter - Unused
+    // Stack poiunter
     int sp;
 
-    // Return Address - Unused
+    // Return Address
     int ra;
 };
 
