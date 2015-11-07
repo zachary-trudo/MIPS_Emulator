@@ -15,7 +15,7 @@ const char* instructNames[] = {"ADD", "ADDI", "ADDU", "ADDIU", "SUB", "SUBI", "S
 // ALU
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
 
-// Arethmtic Operations - Basic arethmetic operations
+// Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow);
 int MIPS_ADDI(const int rs, const int immediate, int *overflow);
 int MIPS_ADDU(const int rs, const int rt);

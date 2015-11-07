@@ -9,9 +9,6 @@
 typedef enum {FALSE, TRUE} bool;
 
 
-}
-            
-
 int main(int argc, char *argv[])
 {
     // Open instruction file. 
