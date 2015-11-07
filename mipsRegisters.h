@@ -10,7 +10,7 @@
 struct registers
 {
     // Zero is always zero. 
-    int zero;
+    const int zero;
 
     // Aseembler Temporary
     int at;

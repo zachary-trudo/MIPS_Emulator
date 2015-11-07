@@ -7,18 +7,28 @@
 #include "mipsRegisters.h" // Contains the mipsRegister struct.
 #include "mipsMemory.h"
 
-typedef enum Instructions {ADD, ADDI, ADDU, ADDIU, SUB, SUBI, SUBU, SUBIU, BEQ, BGTZ, BLTZ, BNE, J, LW};
+typedef enum instructs  {ADD, ADDI, ADDU, ADDIU, SUB, SUBI, SUBU, SUBIU, AND, OR, BEQ, BGTZ, BLTZ, BNE, J, LW} Instructions;
 
-// Arethmetic Operations - Basic arethmetic operations
-int MIPS_ADD(int *rd, const int rs, const int rt, int *overFlow);
-int MIPS_ADDI(int *rd, const int rs, const int immediate, int *overFlow);
-int MIPS_ADDU(int *rd, const int rs, const int rt);
-int MIPS_ADDIU(int *rd, const int rs, const int rt);
+const char* instructNames[] = {"ADD", "ADDI", "ADDU", "ADDIU", "SUB", "SUBI", "SUBU", "SUBIU", "AND", "OR", "BEQ", "BGTZ", "BLTZ", "BNE", "J", "LW"};
 
-int MIPS_SUB(int *rd, const int rs, const int rt, int *overFlow);
-int MIPS_SUBI(int *rd, const int rs, const int immediate, int *overFlow);
-int MIPS_SUBU(int *rd, const int rs, const int rt);
-int MIPS_SUBIU(int *rd, const int rs, int immediate);
+
+// ALU
+int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
+
+// Arethmtic Operations - Basic arethmetic operations
+int MIPS_ADD(const int rs, const int rt, int *overflow);
+int MIPS_ADDI(const int rs, const int immediate, int *overflow);
+int MIPS_ADDU(const int rs, const int rt);
+int MIPS_ADDIU(const int rs, const int rt);
+
+int MIPS_SUB(const int rs, const int rt, int *overflow);
+int MIPS_SUBI(const int rs, const int immediate, int *overflow);
+int MIPS_SUBU(const int rs, const int rt);
+int MIPS_SUBIU(const int rs, int immediate);
+
+// Logical Operations
+int MIPS_AND(const int rs, const int rt);
+int MIPS_OR(const int rs, const int rt);
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
 int MIPS_BEQ(int *stored, int *temporary, char *LABEL, int *nextInstruction);
