@@ -1,31 +1,21 @@
 // Author:          Zachary A Trudo
 // Changelog:       Initial Creation - Nov 6, 2015
-
-#include "mipsInstructions.h"
-
 #ifndef __MIPSMEMORY_H__
 #define __MIPSMEMORY_H__
 
-
+#include "mipsInstructions.h"
 
 #define DATA_MEM_SIZE 1028
 #define INSTR_MEM_SIZE 1028
 
 typedef struct instructionMemory
 {
-   char * label;
-	Instructions instr;
+    char * label;
+    Instructions instr;
 	char * dest;
 	char * src;
 	char * target;
-	
 } instructionMemory;
-
-//typedef struct dataMemory
-//{
-  //  int a;
-//} dataMemory;
-
 
 extern int data_mem[];
 extern instructionMemory instr_mem[];

@@ -1,9 +1,8 @@
 // Author:      Zachary A Trudo
 // Change Log:  Initial Commit - Nov 6, 2015
 //              Fleshed out all the instructions - Nov 7, 2015
-#include "mipsInstructionSet.h"
 
-const char* instructNames[] = {"ADD", "ADDI", "ADDU", "ADDIU", "SUB", "SUBI", "SUBU", "SUBIU", "AND", "OR", "SLT", "BEQ", "BGTZ", "BLTZ", "BNE", "J", "LW"};
+#include "mipsInstructionSet.h"
 
 // Mips ALU, should work.
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction)

@@ -2,5 +2,5 @@
 #define __MIPSINSTRUCTIONS_H__
 
 typedef enum instructs  {ADD, ADDI, ADDU, ADDIU, SUB, SUBI, SUBU, SUBIU, AND, OR, SLT, BEQ, BGTZ, BLTZ, BNE, J, LW} Instructions;
-
+extern const char* instructNames[];
 #endif
