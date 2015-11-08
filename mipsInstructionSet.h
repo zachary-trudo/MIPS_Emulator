@@ -24,7 +24,7 @@ int MIPS_ADDIU(const int rs, const int rt);
 
 int MIPS_SUB(const int rs, const int rt, int *overflow);
 int MIPS_SUBI(const int rs, const int immediate, int *overflow);
-int MIPS_SUBU(const int rs, const int rt);
+int MIPS_SUBU(const int rs, const int rt);	
 int MIPS_SUBIU(const int rs, int immediate);
 
 // Logical Operations

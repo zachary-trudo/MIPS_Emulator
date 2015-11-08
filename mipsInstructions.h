@@ -14,6 +14,7 @@ typedef enum instructs  {
 } Instructions;
 
 
+const char* instructNames[31];
 
 #endif
 

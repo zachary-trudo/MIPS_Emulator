@@ -18,9 +18,8 @@ int main(int argc, char *argv[])
     fp = fopen(argv[1], "r");
 
     // Initialize all registers to 0.
-    mipsRegister mipsReg = {3};
-	 mipsReg.t2 = 10;
-	 printf("Some register: %d\n", mipsReg.t2);
+    mipsRegister mipsReg = {0};
+
     while(TRUE)
     {
 
