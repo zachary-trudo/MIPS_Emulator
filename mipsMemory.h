@@ -28,11 +28,11 @@ typedef struct instruction
 
 
 extern int data_mem[];
-extern instruction instr_mem[];
+extern instruction * instr_mem;
 
 void save_data(int address, int value);
 int load_data(int address);
 
-void save_program(char * program);
+void save_program(instruction * program);
 instruction fetch_instr(int address);
 #endif

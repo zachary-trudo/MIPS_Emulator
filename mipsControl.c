@@ -8,4 +8,7 @@ void MIPS_JMP(char * address){
 	return;
 }
 
-printf("Test: %d", registers.
+void test(){
+printf("Test: %d", registers.zero);
+}
+

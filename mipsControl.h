@@ -3,5 +3,5 @@
 
 
 void MIPS_JMP(char * address);
-	
+void test();
 #endif
