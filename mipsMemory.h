@@ -11,15 +11,23 @@
 #define DATA_MEM_SIZE 1028
 #define INSTR_MEM_SIZE 1028
 
-typedef struct instructionMemory
+typedef struct mipsLabel
 {
-   char * label;
+	char * label;
+	int address;
+}mipsLabel;
+
+typedef struct instruction
+{
+
+   mipsLabel label;
 	Instructions instr;
 	char * dest;
 	char * src;
 	char * target;
-	
-} instructionMemory;
+	int immediate;
+
+} instruction;
 
 //typedef struct dataMemory
 //{
@@ -28,11 +36,11 @@ typedef struct instructionMemory
 
 
 extern int data_mem[];
-extern instructionMemory instr_mem[];
+extern instruction instr_mem[];
 
 void save_data(int address, int value);
 int load_data(int address);
 
 void save_program(char * program);
-char* fetch_instr(int address);
+instruction fetch_instr(int address);
 #endif

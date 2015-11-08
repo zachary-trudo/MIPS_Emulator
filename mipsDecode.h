@@ -3,6 +3,8 @@
 #ifndef __MIPSDECODE_H__
 #define __MIPSDECODE_H__
 
+#include "mipsInstructions.h"
+
 int MIPS_DECODE(char *instruction);
 
 #endif

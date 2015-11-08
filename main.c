@@ -5,6 +5,7 @@
 #include "mipsRegisters.h"
 #include "mipsInstructionSet.h"
 #include "mipsMemory.h"
+#include "mipsDecode.h"
 
 typedef enum {FALSE, TRUE} bool;
 
