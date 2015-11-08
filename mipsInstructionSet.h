@@ -4,15 +4,14 @@
 #define __MIPSINSTRUCTIONSET_H__
 #include <stdlib.h>
 #include <stdio.h>
-#include "mipsRegisters.h" // Contains the mipsRegister struct.
-#include "mipsMemory.h"
+#include "mipsInstructions.h"   // Contains the instruction type and instructNames.
+#include "mipsRegisters.h"      // Contains the mipsRegister struct.
+#include "mipsMemory.h"         // Contains how we'll be handling memory.
 
 #define MAXVALUE 9999999999
 #define MINVALUE -9999999999
 
 
-
-extern const char* instructNames[];
 
 // ALU
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
