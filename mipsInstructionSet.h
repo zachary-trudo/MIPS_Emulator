@@ -10,10 +10,9 @@
 #define MAXVALUE 9999999999
 #define MINVALUE -9999999999
 
-typedef enum instructs  {ADD, ADDI, ADDU, ADDIU, SUB, SUBI, SUBU, SUBIU, AND, OR, SLT, BEQ, BGTZ, BLTZ, BNE, J, LW} Instructions;
+
 
 extern const char* instructNames[];
-
 
 // ALU
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
