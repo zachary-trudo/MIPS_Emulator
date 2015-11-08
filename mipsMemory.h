@@ -21,10 +21,10 @@ typedef struct instructionMemory
 	
 } instructionMemory;
 
-typedef struct dataMemory
-{
-    int a;
-} dataMemory;
+//typedef struct dataMemory
+//{
+  //  int a;
+//} dataMemory;
 
 
 extern int data_mem[];
