@@ -7,9 +7,12 @@
 #include "mipsRegisters.h" // Contains the mipsRegister struct.
 #include "mipsMemory.h"
 
+#define MAXVALUE 9999999999
+#define MINVALUE -9999999999
+
 typedef enum instructs  {ADD, ADDI, ADDU, ADDIU, SUB, SUBI, SUBU, SUBIU, AND, OR, SLT, BEQ, BGTZ, BLTZ, BNE, J, LW} Instructions;
 
-const char* instructNames[] = {"ADD", "ADDI", "ADDU", "ADDIU", "SUB", "SUBI", "SUBU", "SUBIU", "AND", "OR", "SLT", "BEQ", "BGTZ", "BLTZ", "BNE", "J", "LW"};
+extern const char* instructNames[];
 
 
 // ALU
@@ -39,13 +42,13 @@ int MIPS_SLTU(const int rs, const int rt);
 int MIPS_BEQ(const int rs, const int rt, char *LABEL, int *nextInstruction);
 int MIPS_BGTZ(const int rs, char *LABEL, int *nextInstruction);
 int MIPS_BLTZ(const int rs, char *LABEL, int *nextInstruction);
-int MIPS_BNE(const int rs, char *LABEL, int *nextInstruction);
+int MIPS_BNE(const int rs, const int rt, char *LABEL, int *nextInstruction);
 
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 int MIPS_J(char *LABEL, int *nextInstruction);
 
 // Load Operations
-int MIPS_LW(const int rt, memoryAddress *location); 
+//int MIPS_LW(const int rt, memoryAddress *location); 
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

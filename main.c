@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     fp = fopen(argv[1], "r");
 
     // Initialize all registers to 0.
-    mipsRegisters mipsReg = {0};
+    mipsRegister mipsReg = {0};
 
 
 

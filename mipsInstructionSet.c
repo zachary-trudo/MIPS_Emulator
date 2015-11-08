@@ -1,4 +1,9 @@
+// Author:      Zachary A Trudo
+// Change Log:  Initial Commit - Nov 6, 2015
+//              Fleshed out all the instructions - Nov 7, 2015
 #include "mipsInstructionSet.h"
+
+const char* instructNames[] = {"ADD", "ADDI", "ADDU", "ADDIU", "SUB", "SUBI", "SUBU", "SUBIU", "AND", "OR", "SLT", "BEQ", "BGTZ", "BLTZ", "BNE", "J", "LW"};
 
 // Mips ALU, should work.
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction)
@@ -42,7 +47,7 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
 
         // Unimplemented Instruction:
         default:
-            printf("Unimplemented Instruction, or not R-Type OP: %s\n", instruction);
+            printf("Unimplemented Instruction, or not R-Type OP: %s\n", instructNames[instruction]);
             exit(1);
             break;
     }
@@ -79,7 +84,7 @@ int MIPS_ADDIU(const int rs, const int rt)
 int MIPS_SUB(const  int rs, const  int rt, int *overflow)
 {
     int returnVal = rs + rt;
-    *overflow = returnVal < MINVAL;
+    *overflow = returnVal < MINVALUE;
     return returnVal;
 }
 
@@ -154,7 +159,7 @@ int MIPS_BLTZ(const int rs, char *LABEL, int *nextInstruction)
 int MIPS_BNE(const int rs, const int rt, char *LABEL, int *nextInstruction)
 {
     int returnVal = 0;
-    if (MIPS_SUB(rs, rt) != 0)
+    if (MIPS_SUBU(rs, rt) != 0)
     {
         MIPS_J(LABEL, nextInstruction);
         returnVal = 1;
@@ -170,8 +175,7 @@ int MIPS_J(char *LABEL, int *nextInstruction)
 }
 
 // Load Operations
-int MIPS_LW(const int rt, memoryAddress *location); 
+//int MIPS_LW(const int rt, memoryAddress *location); 
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 
-#endif
