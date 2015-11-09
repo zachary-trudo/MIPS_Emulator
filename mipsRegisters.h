@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
+
 // While mips registers could be easily represented as an array of 32 ints, this way we can 
 // reference them in a similar fasion to how they would be referenced in assembly.
 struct registers
@@ -65,4 +67,6 @@ struct registers
 
 typedef struct registers mipsRegister;
 
+
+int * getPointerToRegister(const char* desiredReg, mipsRegister *mipsReg);
 #endif

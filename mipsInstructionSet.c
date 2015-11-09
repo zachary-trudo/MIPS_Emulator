@@ -1,7 +1,7 @@
 // Author:      Zachary A Trudo
 // Change Log:  Initial Commit - Nov 6, 2015
 //              Fleshed out all the instructions - Nov 7, 2015
-
+#include <stdio.h>
 #include "mipsInstructionSet.h"
 
 // Mips ALU, should work.
@@ -13,6 +13,7 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
         // Arithmetic Ops:
         case ADD:
             returnVal = MIPS_ADD(rs, rt, overflow);
+			printf("MIPS_ALU, case=ADD. return: %d \n", returnVal);
             break;
         case ADDI:
             returnVal = MIPS_ADDI(rs, rt, overflow);
@@ -56,7 +57,9 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow)
 {
+	printf("MIPS_ADD, rs = %d, rt = %d\n", rs, rt);
     int returnVal = rs + rt;
+	printf("MIPS_ADD, returnVal = %d\n", returnVal);
     *overflow = returnVal > MAXVALUE;
     return returnVal;
 }

@@ -6,6 +6,7 @@
 #include "mipsInstructionSet.h"
 #include "mipsMemory.h"
 #include "mipsDecode.h"
+#include "mipsControl.h"
 
 typedef enum {FALSE, TRUE} bool;
 
@@ -17,14 +18,14 @@ int main(int argc, char *argv[])
     fp = fopen(argv[1], "r");
 
     // Initialize all registers to 0.
-    mipsRegister mipsReg = {0};
-
-
+    //mipsRegister mipsReg = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	run_program();
 
     while(TRUE)
     {
 
-
+		break;
+		
     }
     
 
