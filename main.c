@@ -15,10 +15,12 @@ int main(int argc, char *argv[])
 {
     // Open instruction file. 
     FILE *fp;
-    fp = fopen(argv[1], "r");
+
+    if(argv[1])
+        fp = fopen(argv[1], "r");
 
     // Initialize all registers to 0.
-    //mipsRegister mipsReg = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    mipsRegister mipsReg = {0};
 	run_program();
 
     while(TRUE)

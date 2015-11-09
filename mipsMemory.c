@@ -1,6 +1,5 @@
 #include "mipsMemory.h"
 
-
 int data_mem[DATA_MEM_SIZE];
 memInstruct instr_mem[INSTR_MEM_SIZE];
 
@@ -26,15 +25,16 @@ int load_data(int address){
 //Assuming mipsDecode decodes instructions into an array of instruction structs...
 //storing a program becomes changing the instr_mem pointer to the beninning
 //of the parsed list.
-void save_program(instruction * program){
+void save_program(const memInstruct* program){
 	// save program at index 0
 	// Solve this when we get to decode, but
 	// are we sure mips statements will be newline separated?
 	
-	instr_mem = program;
+	*instr_mem = *program;
 }
 
-instruction fetch_instr(int address){
+memInstruct fetch_instr(int address)
+{
 	if(address < 0 || address > INSTR_MEM_SIZE){
 		//error
 	}

@@ -25,21 +25,19 @@ typedef struct instruction
 	char *rt;
 	char *rs;
 	char *rd;
-	char *imm;
-    char *addr;
-	int immediate;
-}memInstruct;
 
+	char* imm;
+
+    char* addr;
+}memInstruct;
 
 
 extern int data_mem[DATA_MEM_SIZE];
 extern memInstruct instr_mem[INSTR_MEM_SIZE];
 
-
 void save_data(int address, int value);
 int load_data(int address);
 
-void save_program(instruction * program);
+void save_program(const memInstruct* program);
 memInstruct fetch_instr(int address);
-
 #endif

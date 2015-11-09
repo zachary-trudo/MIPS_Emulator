@@ -68,5 +68,5 @@ struct registers
 typedef struct registers mipsRegister;
 
 
-int * getPointerToRegister(const char* desiredReg, mipsRegister *mipsReg);
+int* getPointerToRegister(char* const desiredReg, mipsRegister *mipsReg);
 #endif

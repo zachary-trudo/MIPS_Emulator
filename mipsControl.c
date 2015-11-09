@@ -1,25 +1,19 @@
 #include "mipsControl.h"
-#include "mipsRegisters.h"
-#include "mipsMemory.h"
-#include "mipsInstructions.h"
-#include "mipsInstructionSet.h"
-#include <stdio.h>
-
 //make a test program, init necessary registers, save program to instruction memory
-int make_test_program(mipsRegister * regs){
-	instruction one;
-	one.instr = ADD;
-	one.dest = "$t1";
-	one.src = "$t2";
-	one.target = "$t3";
+int make_test_program(mipsRegister* regs){
+	memInstruct* one = (memInstruct*) malloc(sizeof(memInstruct));
+	one->instr = ADD;
+	one->rd = "$t1";
+	one->rs = "$t2";
+	one->rt = "$t3";
 
 	regs->gp = 0;
 	regs->t1 = 0;
 	regs->t2 = 5;
 	regs->t3 = 7;
 	
-	instruction * program = {&one};
-	save_program(program);
+	memInstruct* program = {one};
+    save_program(program);
 
 	int instruction_count = 1;
 	return instruction_count;
@@ -30,7 +24,7 @@ int make_test_program(mipsRegister * regs){
 //manage program counter (global instruction pointer).
 int run_program(){
 	int instruction_count;
-	instruction cur_instr;
+	memInstruct cur_instr;
 	mipsRegister mipsReg = {0};
 
 
@@ -43,8 +37,8 @@ int run_program(){
 		cur_instr = fetch_instr(program_counter);
 		program_counter += 1;
 
-		int *src_reg = getPointerToRegister(cur_instr.src, &mipsReg);
-		int *target_reg = getPointerToRegister(cur_instr.target, &mipsReg);
+		int *src_reg = getPointerToRegister(cur_instr.rs, &mipsReg);
+		int *target_reg = getPointerToRegister(cur_instr.rt, &mipsReg);
 		int *dest_reg = getPointerToRegister("$t0", &mipsReg);
 
 		printf("register pointer test %d\n", (dest_reg == (&mipsReg.t0)));

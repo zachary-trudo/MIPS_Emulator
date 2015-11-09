@@ -6,7 +6,7 @@ struct charToRegister {
 };
 
 
-int* getPointerToRegister(const char* desiredReg, mipsRegister *mipsReg)
+int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 {
     
     struct charToRegister c2rDict[] =

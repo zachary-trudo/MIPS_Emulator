@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define NUM_OF_INSTRUCTS 31
+#define NUM_OF_INSTRUCTS 27 
 
 typedef enum instructs  {
 	//Arithmetic RTYPE
@@ -25,17 +25,18 @@ typedef enum instructs  {
                                                     // 11 ITYPE (13 - 23)
     
     // Jump JTYPE
-    J, JAL, JR,                                      // 3 JTYPE (24 - 26)
+    J, JAL, JR                                      // 3 JTYPE (24 - 26)
 
 	//Bitwise/shifts - UNUSED
-	SLL, SLLV, SRA, SRAV, SRL, SRLV                 // Unused (27 - )
+	//SLL, SLLV, SRA, SRAV, SRL, SRLV                 // Unused (27 - )
 } Instructions;
 
 typedef enum instuctType { RTYPE, ITYPE, JTYPE} InstructionType;
-extern const char* instructNames[31];
+extern const char* instructNames[NUM_OF_INSTRUCTS];
+extern const char* instructTypes[3];
 
 void charToUpper(char* str);
-InstructionType getInstructionType(Instruction instruct);
+InstructionType getInstructionType(const Instructions instruct);
 Instructions getInstructFromChar(char* charInstruct);
 
 #endif

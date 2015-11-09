@@ -1,6 +1,6 @@
 #include "mipsInstructions.h"
 
-const char* instructNames[31] = {
+const char* instructNames[NUM_OF_INSTRUCTS] = {
 	//Arithmetic RTYPE
 	"ADD", "ADDU", "SUB", "SUBU", "MULT", "MULTU", "DIV", "DIVU",   // 8 Items
     // Logical RTYPE
@@ -20,11 +20,13 @@ const char* instructNames[31] = {
                                             // 11 ITYPE (13 - 23)
     
     // Jump JTYPE
-    "J", "JAL", "JR",                        // 3 JTYPE (24 - 26)
+    "J", "JAL", "JR"                        // 3 JTYPE (24 - 26)
 
 	//Bitwise/shifts - UNUSED
-    "SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
+    //"SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
 };
+
+const char* instructTypes[3] = {"RTYPE", "ITYPE", "JTYPE" };
 
 // Because C sucks it doesn't have an .upper function... I hate C.
 void charToUpper(char* str)
@@ -41,9 +43,9 @@ void charToUpper(char* str)
     }
 }
 
-InstructionType getInstructionType(Instruction instruct)
+InstructionType getInstructionType(const Instructions instruct)
 {
-    InstructionType returnVal = NULL;
+    InstructionType returnVal = -1;
     if (instruct >= 0 && instruct <= 12)
     {
         returnVal = RTYPE;
@@ -63,7 +65,7 @@ InstructionType getInstructionType(Instruction instruct)
 
 Instructions getInstructFromChar(char* charInstruct)
 {
-    Instruction returnVal = NULL;
+    Instructions returnVal = -1;
     int i = 0;
     int len = sizeof(instructNames) / sizeof(char);
 

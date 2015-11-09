@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "mipsParseFile.h"
-#include "mipsInstruction.h"
-#include "mipsRegisters.h"
 
 void replaceChar(char *str, char garbage, char replace)
 {
@@ -20,14 +15,14 @@ void replaceChar(char *str, char garbage, char replace)
     *dst = '\0';
 }
 
-int containsChar(const char* str, char item)
+int containsChar(char* const str, char item)
 {
     int returnVal = 0;
     char* strPtr = str;
 
-    for(strPtr; str != '\0'; str++)
+    for(strPtr; *strPtr != '\0'; strPtr++)
     {
-        if(*str == item)
+        if(*strPtr == item)
         {
             returnVal = 1;
             break;
@@ -36,12 +31,12 @@ int containsChar(const char* str, char item)
     return returnVal;
 }
 
-void splitLoadToken(char* token, const char* imm, const char* rs)
+void splitLoadToken(char* token, char* const imm, char* const rs)
 {
     char* immPtr = imm;
     char* rsPtr = rs;
 
-    for(token; token != '('; token++)
+    for(token; *token != '('; token++)
     {
         *immPtr = *token;
         immPtr++;
@@ -49,7 +44,7 @@ void splitLoadToken(char* token, const char* imm, const char* rs)
     *immPtr = '\0';
     token++;
 
-    for(token; token != ')'; token++)
+    for(token; *token != ')'; token++)
     {
         *rsPtr = *token;
         rsPtr++;
@@ -59,27 +54,27 @@ void splitLoadToken(char* token, const char* imm, const char* rs)
 
 
 // Parse the file into instruction and data memory.
-void parseFile(const FILE* infp, const instructionMemory *instructMem, int* instructMemSize)
+void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMemSize)
 {
     FILE* fp = infp;
-    instructionMemory *memPtr = instructMem;
+    memInstruct *memPtr = instructMem;
 
     memInstruct* curInstruct;
     char * line = NULL;
     size_t len  = 0;
-    ssize_t read;
+    size_t read;
     
     char * token;
 
-    while(infp != EOF)
+    while(!feof(fp))
     {
         while((read = getline(&line, &len, infp)) != -1)
         {
             if (*line != '#')
             {
                 // Create a new instruction.
-                curInstruct = (memInstruct*) malloc(sizeof(meminstruct));
-                curInstruct.instr = NULL;
+                curInstruct = (memInstruct*) malloc(sizeof(memInstruct));
+                curInstruct->instr = -1;
 
                 // Replace all ',' with ' '
                 replaceChar(line, ',', ' ');
@@ -87,78 +82,78 @@ void parseFile(const FILE* infp, const instructionMemory *instructMem, int* inst
                 replaceChar(line, '#', '\0');
 
                 // Grab first token.
-                token = strtok(line, ' ');
+                token = strtok(line, " ");
 
                 // If we're not at the end of the line or the beginning of a comment parse.
-                while(token && token != '#')
+                while(token && *token != '#')
                 {
-                    if(!curInstruct.instr)
+                    if(curInstruct->instr == -1)
                     {
-                        curInstruct.instr = getInstructFromChar(token);
-                        if(!curInstruct.instr)
+                        curInstruct->instr = getInstructFromChar(token);
+                        if(curInstruct->instr == -1)
                         {
-                            strcpy(curInstruct.LABEL, token);
+                            strcpy(curInstruct->LABEL, token);
                         }
                         else
                         {
-                            curInstruct.instuctType = getInstructionType(curInstruct.instr);
+                            curInstruct->instType = getInstructionType(curInstruct->instr);
                         }
                     }
-                    else if(curInstruct.type == RTYPE)
+                    else if(curInstruct->instType == RTYPE)
                     {
-                       if(!curInstruct.rd)
+                       if(!curInstruct->rd)
                        {
-                           strcpy(curInstruct.rd, token);
+                           strcpy(curInstruct->rd, token);
                        }
-                       else if(!curInstruct.rs)
+                       else if(!curInstruct->rs)
                        {
-                           strcpy(curInstruct.rs, token);
+                           strcpy(curInstruct->rs, token);
                        }
                        else
                        {
-                           strcpy(curInstruct.rt, token);
+                           strcpy(curInstruct->rt, token);
                            break;
                        }
                     }
-                    else if (curInstruct.type == ITYPE)
+                    else if (curInstruct->instType == ITYPE)
                     {
-                        if(!curInstruct.rt)
+                        if(!curInstruct->rt)
                         {
-                            strcpy(curInstruct.rt, token);
+                            strcpy(curInstruct->rt, token);
                         }
                         else
                         {
                             if(containsChar(token, '('))
                             {
-                                splitLoadToken(token, &curInstruct.imm, &curInstruct.rs);
+                                splitLoadToken(token, curInstruct->imm, curInstruct->rs);
                             }
-                            else if(!curInstruct.rs)
+                            else if(!curInstruct->rs)
                             {
-                                strcpy(curInstruct.rs, token);
+                                strcpy(curInstruct->rs, token);
                             }
                             else
                             {
-                                strcpy(curInstruct.imm, token);
+                                strcpy(curInstruct->imm, token);
                                 break;
                             }
                         }
                     }
                     else
                     {
-                        if(curInstruct.instr == J || curInstruct.instr == JAL)
+                        if(curInstruct->instr == J || curInstruct->instr == JAL)
                         {
-                            strcpy(curInstruct.addr, token);
+                            strcpy(curInstruct->addr, token);
                             break;
                         }
                         else
                         {
-                            strcpy(curInstruct.rs, token);
+                            strcpy(curInstruct->rs, token);
                         }
                     }
 
-                    token = strtok(NULL, ' ');
+                    token = strtok(NULL, " ");
                 }
-                *memPtr = curInstruct;
+                memPtr = curInstruct;
                 memPtr++;
                 instructMemSize++;
             }
@@ -177,47 +172,41 @@ void parseFile(const FILE* infp, const instructionMemory *instructMem, int* inst
 }
 
 // For debugging... Write out what we thought we got into a file. 
-void writeFile(const FILE* outfp, const instructionMemory *instructMem, int* instructMemSize)
+void writeFile(FILE* const outfp, memInstruct* const instructMem, const int instructMemSize)
 {
     FILE* fp = outfp;
-    instructionMemory *memPtr = instructMem;
+    memInstruct *memPtr = instructMem;
     int i = 0;
 
     for(i; i < instructMemSize; i++)
     {
-        fprintf("\n");
-        if(memPtr.type)
-            fprintf("type: %s ", memPtr.type);
-            printf("type: %s ", memPtr.type);
-        if(memPtr.LABEL)
-            fprintf("LABEL: %s ", memPtr.LABEL);
-            printf("LABEL: %s ", memPtr.LABEL);
-        if(memPtr.instr)
-            fprintf("instr: %s ", memPtr.instr);
-            printf("instr: %s ", memPtr.instr);
-        if(memPtr.rs)
-            fprint("rs: %s ", memPtr.rs);
-            print("rs: %s ", memPtr.rs);
-        if(memPtr.rt)
-            fprintf("rt: %s ", memPtr.rt);
-            printf("rt: %s ", memPtr.rt);
-        if(memPtr.rd)
-            fprinttf("rd: %s ", memPtr.rd);
-            printtf("rd: %s ", memPtr.rd);
-        if(memPtr.imm)
-            fprintf("imm: %s ", memPtr.imm);
-            printf("imm: %s ", memPtr.imm);
-        if(memPtr.addr)
-            fprintf("addr: %s.", memPtr.addr);
-            printf("addr: %s.", memPtr.addr);
+        fprintf(outfp, "\n");
+        printf("\n");
+        if(memPtr->instType)
+            fprintf(outfp, "type: %s ", instructTypes[memPtr->instType]);
+            printf("type: %s ", instructTypes[memPtr->instType]);
+        if(memPtr->LABEL)
+            fprintf(outfp, "LABEL: %s ", memPtr->LABEL);
+            printf("LABEL: %s ", memPtr->LABEL);
+        if(memPtr->instr)
+            fprintf(outfp, "instr: %s ", instructNames[memPtr->instr]);
+            printf("instr: %s ", instructNames[memPtr->instr]);
+        if(memPtr->rs)
+            fprintf(outfp, "rs: %s ", memPtr->rs);
+            printf("rs: %s ", memPtr->rs);
+        if(memPtr->rt)
+            fprintf(outfp, "rt: %s ", memPtr->rt);
+            printf("rt: %s ", memPtr->rt);
+        if(memPtr->rd)
+            fprintf(outfp, "rd: %s ", memPtr->rd);
+            printf("rd: %s ", memPtr->rd);
+        if(memPtr->imm)
+            fprintf(outfp, "imm: %s ", memPtr->imm);
+            printf("imm: %s ", memPtr->imm);
+        if(memPtr->addr)
+            fprintf(outfp, "addr: %s.", memPtr->addr);
+            printf("addr: %s.", memPtr->addr);
         memPtr++;
     }
 }
 
-
-
-
-
-
-
-#endif
