@@ -20,68 +20,203 @@ void replaceChar(char *str, char garbage, char replace)
     *dst = '\0';
 }
 
-// Parse the file into instruction and data memory.
-void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem, mipsRegisters *mipReg)
+int containsChar(const char* str, char item)
 {
-    memInstruct* curInstruct;
+    int returnVal = 0;
+    char* strPtr = str;
 
+    for(strPtr; str != '\0'; str++)
+    {
+        if(*str == item)
+        {
+            returnVal = 1;
+            break;
+        }
+    }
+    return returnVal;
+}
+
+void splitLoadToken(char* token, const char* imm, const char* rs)
+{
+    char* immPtr = imm;
+    char* rsPtr = rs;
+
+    for(token; token != '('; token++)
+    {
+        *immPtr = *token;
+        immPtr++;
+    }
+    *immPtr = '\0';
+    token++;
+
+    for(token; token != ')'; token++)
+    {
+        *rsPtr = *token;
+        rsPtr++;
+    }
+    *rsPtr = '\0';
+}
+
+
+// Parse the file into instruction and data memory.
+void parseFile(const FILE* infp, const instructionMemory *instructMem, int* instructMemSize)
+{
+    FILE* fp = infp;
+    instructionMemory *memPtr = instructMem;
+
+    memInstruct* curInstruct;
     char * line = NULL;
     size_t len  = 0;
     ssize_t read;
     
-    char * tokendLine;
+    char * token;
 
     while(infp != EOF)
     {
         while((read = getline(&line, &len, infp)) != -1)
         {
-            curInstruct = (memInstruct*) malloc(sizeof(meminstruct));
             if (*line != '#')
             {
+                // Create a new instruction.
+                curInstruct = (memInstruct*) malloc(sizeof(meminstruct));
+                curInstruct.instr = NULL;
+
                 // Replace all ',' with ' '
                 replaceChar(line, ',', ' ');
-                // Grab token on ' '
-                tokendLine = strtok(line, ' ');
+                // Replace all '#' with '\0' - as thats the end of the line as far as our parser is concerned. 
+                replaceChar(line, '#', '\0');
 
-                // If we're not at the end of the line parse.
-                while(tokendLine)
+                // Grab first token.
+                token = strtok(line, ' ');
+
+                // If we're not at the end of the line or the beginning of a comment parse.
+                while(token && token != '#')
                 {
-                    if (*tokendLine != '#')
+                    if(!curInstruct.instr)
                     {
-                        if(!currentInstruct.instr)
+                        curInstruct.instr = getInstructFromChar(token);
+                        if(!curInstruct.instr)
                         {
-                            // charToInstruct will return NULL if tokenedLine isn't an instruction.
-                            currentInstruct.instr = charToInstruct(tokendLine);
-                            if (!currentInstruct.instr)
+                            strcpy(curInstruct.LABEL, token);
+                        }
+                        else
+                        {
+                            curInstruct.instuctType = getInstructionType(curInstruct.instr);
+                        }
+                    }
+                    else if(curInstruct.type == RTYPE)
+                    {
+                       if(!curInstruct.rd)
+                       {
+                           strcpy(curInstruct.rd, token);
+                       }
+                       else if(!curInstruct.rs)
+                       {
+                           strcpy(curInstruct.rs, token);
+                       }
+                       else
+                       {
+                           strcpy(curInstruct.rt, token);
+                           break;
+                       }
+                    }
+                    else if (curInstruct.type == ITYPE)
+                    {
+                        if(!curInstruct.rt)
+                        {
+                            strcpy(curInstruct.rt, token);
+                        }
+                        else
+                        {
+                            if(containsChar(token, '('))
                             {
-                                strcpy(currentInstruct.LABEL, tokendLine);
+                                splitLoadToken(token, &curInstruct.imm, &curInstruct.rs);
+                            }
+                            else if(!curInstruct.rs)
+                            {
+                                strcpy(curInstruct.rs, token);
+                            }
+                            else
+                            {
+                                strcpy(curInstruct.imm, token);
+                                break;
                             }
                         }
-                        else if (*tokendLine == '$' || (*tokendLine >= '0' && *tokendLine <= '9'))
+                    }
+                    else
+                    {
+                        if(curInstruct.instr == J || curInstruct.instr == JAL)
                         {
-                            if(!currentInstruct.rd)
-                            {
-                                strcpy(currentInstruct.rd, tokendLine);
-                            }
+                            strcpy(curInstruct.addr, token);
+                            break;
+                        }
+                        else
+                        {
+                            strcpy(curInstruct.rs, token);
+                        }
+                    }
 
-
-                        
-
-
-
-
+                    token = strtok(NULL, ' ');
+                }
+                *memPtr = curInstruct;
+                memPtr++;
+                instructMemSize++;
+            }
         }
     }
 
     if (line)
     {
-        free(line)
+        free(line);
+    }
+    if (token)
+    {
+        free(token);
     }
     return;
 }
 
 // For debugging... Write out what we thought we got into a file. 
-void writeFile(FILE* outfp, instructionMemory *instructMem, dataMemory *dataMem);
+void writeFile(const FILE* outfp, const instructionMemory *instructMem, int* instructMemSize)
+{
+    FILE* fp = outfp;
+    instructionMemory *memPtr = instructMem;
+    int i = 0;
+
+    for(i; i < instructMemSize; i++)
+    {
+        fprintf("\n");
+        if(memPtr.type)
+            fprintf("type: %s ", memPtr.type);
+            printf("type: %s ", memPtr.type);
+        if(memPtr.LABEL)
+            fprintf("LABEL: %s ", memPtr.LABEL);
+            printf("LABEL: %s ", memPtr.LABEL);
+        if(memPtr.instr)
+            fprintf("instr: %s ", memPtr.instr);
+            printf("instr: %s ", memPtr.instr);
+        if(memPtr.rs)
+            fprint("rs: %s ", memPtr.rs);
+            print("rs: %s ", memPtr.rs);
+        if(memPtr.rt)
+            fprintf("rt: %s ", memPtr.rt);
+            printf("rt: %s ", memPtr.rt);
+        if(memPtr.rd)
+            fprinttf("rd: %s ", memPtr.rd);
+            printtf("rd: %s ", memPtr.rd);
+        if(memPtr.imm)
+            fprintf("imm: %s ", memPtr.imm);
+            printf("imm: %s ", memPtr.imm);
+        if(memPtr.addr)
+            fprintf("addr: %s.", memPtr.addr);
+            printf("addr: %s.", memPtr.addr);
+        memPtr++;
+    }
+}
+
+
+
+
 
 
 

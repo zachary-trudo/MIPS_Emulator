@@ -17,15 +17,18 @@ typedef struct mipsLabel
 typedef struct instruction
 {
     mipsLabel label;
+    
+    char*   LABEL;
+    InstructionType instType;
     Instructions instr;
+
 	char *rt;
 	char *rs;
 	char *rd;
-	int immediate;
 
+	char* imm;
 
-
-
+    char* addr;
 }memInstruct;
 
 

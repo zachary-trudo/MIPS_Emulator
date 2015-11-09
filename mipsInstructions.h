@@ -32,12 +32,12 @@ typedef enum instructs  {
 } Instructions;
 
 typedef enum instuctType { RTYPE, ITYPE, JTYPE} InstructionType;
-
 extern const char* instructNames[31];
 
-
+void charToUpper(char* str);
 InstructionType getInstructionType(Instruction instruct);
 Instructions getInstructFromChar(char* charInstruct);
+
 #endif
 
 /*
