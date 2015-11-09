@@ -43,7 +43,8 @@ void charToUpper(char* str)
 
 InstructionType getInstructionType(Instruction instruct)
 {
-    InstructionType returnVal = NULL;
+	//This was originially initialized to null, but that gave a type error.
+    InstructionType returnVal = -1;
     if (instruct >= 0 && instruct <= 12)
     {
         returnVal = RTYPE;
@@ -61,9 +62,9 @@ InstructionType getInstructionType(Instruction instruct)
 }
 
 
-Instructions getInstructFromChar(char* charInstruct)
+Instruction getInstructFromChar(char* charInstruct)
 {
-    Instruction returnVal = NULL;
+    Instruction returnVal = -1;
     int i = 0;
     int len = sizeof(instructNames) / sizeof(char);
 

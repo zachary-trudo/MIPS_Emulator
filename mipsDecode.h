@@ -5,7 +5,7 @@
 
 #include "mipsInstructions.h"
 
-int MIPS_DECODE(char *instruction);
+Instruction MIPS_DECODE(char *instruction);
 
 #endif
 

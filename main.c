@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
     fp = fopen(argv[1], "r");
 
     // Initialize all registers to 0.
-    //mipsRegister mipsReg = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	run_program();
+    mipsRegister mipsReg = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	parseFile(fp, instr_mem, data_mem, &mipsReg);
+	//run_program();
 
     while(TRUE)
     {

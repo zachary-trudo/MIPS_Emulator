@@ -2,8 +2,8 @@
 #include <string.h>
 
 #include "mipsParseFile.h"
-#include "mipsInstruction.h"
-#include "mipsRegisters.h"
+
+
 
 void replaceChar(char *str, char garbage, char replace)
 {
@@ -20,8 +20,10 @@ void replaceChar(char *str, char garbage, char replace)
     *dst = '\0';
 }
 
+
+
 // Parse the file into instruction and data memory.
-void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem, mipsRegisters *mipReg)
+void parseFile(FILE* infp, memInstruct *instructMem, int *datMem, mipsRegister *mipReg)
 {
     memInstruct* curInstruct;
 
@@ -35,7 +37,8 @@ void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem, m
     {
         while((read = getline(&line, &len, infp)) != -1)
         {
-            curInstruct = (memInstruct*) malloc(sizeof(meminstruct));
+			//do we need to malloc? doens't declaring curInstruct reserve space for curInstruct?
+            curInstruct = (memInstruct*) malloc(sizeof(memInstruct));
             if (*line != '#')
             {
                 // Replace all ',' with ' '
@@ -48,24 +51,25 @@ void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem, m
                 {
                     if (*tokendLine != '#')
                     {
-                        if(!currentInstruct.instr)
+                        if(!curInstruct->instr)
                         {
-                            // charToInstruct will return NULL if tokenedLine isn't an instruction.
-                            currentInstruct.instr = charToInstruct(tokendLine);
-                            if (!currentInstruct.instr)
+                            // getInstructFromChar will return NULL if tokenedLine isn't an instruction.
+                            curInstruct->instr = getInstructFromChar(tokendLine);
+                            if (!curInstruct->instr)
                             {
-                                strcpy(currentInstruct.LABEL, tokendLine);
+                                strcpy(curInstruct->label.label, tokendLine);
                             }
                         }
                         else if (*tokendLine == '$' || (*tokendLine >= '0' && *tokendLine <= '9'))
                         {
-                            if(!currentInstruct.rd)
+                            if(!curInstruct->rd)
                             {
-                                strcpy(currentInstruct.rd, tokendLine);
+                                strcpy(curInstruct->rd, tokendLine);
                             }
-
-
-                        
+						}
+					}
+                }
+			}   
 
 
 
@@ -75,14 +79,15 @@ void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem, m
 
     if (line)
     {
-        free(line)
+        free(line);
     }
     return;
 }
 
 // For debugging... Write out what we thought we got into a file. 
-void writeFile(FILE* outfp, instructionMemory *instructMem, dataMemory *dataMem);
+void writeFile(FILE* outfp, memInstruct *instructMem, int *dataMem){
+}
 
 
 
-#endif
+

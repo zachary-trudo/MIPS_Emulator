@@ -3,12 +3,13 @@
 
 #include "mipsInstructions.h"
 #include "mipsMemory.h"
+#include "mipsRegisters.h"
 
 // Parse the file into instruction and data memory.
-void parseFile(FILE* infp, instructionMemory *instructMem, dataMemory *datMem);
+void parseFile(FILE* infp, memInstruct *instructMem, int *datMem, mipsRegister *mipReg);
 
 // For debugging... Write out what we thought we got into a file. 
-void writeFile(FILE* outfp, instructionMemory *instructMem, dataMemory *dataMem);
+void writeFile(FILE* outfp, memInstruct *instructMem, int *dataMem);
 
 
 

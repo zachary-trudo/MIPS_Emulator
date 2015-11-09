@@ -17,7 +17,7 @@ typedef struct mipsLabel
 typedef struct instruction
 {
     mipsLabel label;
-    Instructions instr;
+    Instruction instr;
 	char *rt;
 	char *rs;
 	char *rd;
@@ -35,7 +35,7 @@ extern memInstruct instr_mem[INSTR_MEM_SIZE];
 void save_data(int address, int value);
 int load_data(int address);
 
-void save_program(instruction * program);
+
 memInstruct fetch_instr(int address);
 
 #endif

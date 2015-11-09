@@ -29,7 +29,7 @@ typedef enum instructs  {
 
 	//Bitwise/shifts - UNUSED
 	SLL, SLLV, SRA, SRAV, SRL, SRLV                 // Unused (27 - )
-} Instructions;
+} Instruction;
 
 typedef enum instuctType { RTYPE, ITYPE, JTYPE} InstructionType;
 
@@ -37,7 +37,7 @@ extern const char* instructNames[31];
 
 
 InstructionType getInstructionType(Instruction instruct);
-Instructions getInstructFromChar(char* charInstruct);
+Instruction getInstructFromChar(char* charInstruct);
 #endif
 
 /*

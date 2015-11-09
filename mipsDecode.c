@@ -1,8 +1,10 @@
 #include "mipsDecode.h"
 
+
 Instruction MIPS_DECODE(char *charInstruct){
 
-	switch(instruction){
+/*
+	switch(charInstruct){
 		case "add":
 			return ADD;
 		case "addi":
@@ -38,4 +40,5 @@ Instruction MIPS_DECODE(char *charInstruct){
 		case "lw":
 			return LW;
 	}
+*/
 }
