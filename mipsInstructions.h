@@ -36,6 +36,7 @@ extern const char* instructNames[NUM_OF_INSTRUCTS];
 extern const char* instructTypes[3];
 
 void charToUpper(char* str);
+
 InstructionType getInstructionType(const Instructions instruct);
 Instructions getInstructFromChar(char* charInstruct);
 

@@ -3,6 +3,81 @@
 int data_mem[DATA_MEM_SIZE];
 memInstruct instr_mem[INSTR_MEM_SIZE];
 
+void deleteMemInstruct(memInstruct* inst)
+{
+    if(inst->rs)
+        free(inst->rs);
+
+    if(inst->rt)
+        free(inst->rt);
+
+    if(inst->rd)
+        free(inst->rd);
+
+    if(inst->imm)
+        free(inst->imm);
+
+    if(inst->addr)
+        free(inst->addr);
+
+    if(inst->LABEL)
+        free(inst->LABEL);
+    
+    free(inst);
+}
+
+void copyInstructMem(memInstruct* const dest, memInstruct* const src)
+{
+    if(src->LABEL)
+    {
+        dest->LABEL = (char*) malloc(sizeof(src->LABEL));
+        strcpy(dest->LABEL, src->LABEL);
+    }
+
+    if(src->rt)
+    {
+        dest->rt = (char*) malloc(sizeof(src->rt));
+        strcpy(dest->rt, src->rt);
+    }
+
+    if(src->rs)
+    {
+        dest->rs = (char*) malloc(sizeof(src->rs));
+        strcpy(dest->rs, src->rs);
+    }
+
+    if(src->rd)
+    {
+        dest->rd = (char*) malloc(sizeof(src->rd));
+        strcpy(dest->rd, src->rd);
+    }
+
+    if(src->imm)
+    {
+        dest->imm = (char*) malloc(sizeof(src->imm));
+        strcpy(dest->imm, src->imm);
+    }
+
+    if(src->addr)
+    {
+        dest->addr = (char*) malloc(sizeof(src->addr));
+        strcpy(dest->addr, src->addr);
+    }
+
+    if(src->instType)
+    {
+        dest->instType = src->instType;
+        dest->instr = src->instr;
+    }
+}
+
+
+
+
+
+
+
+
 
 void save_data(int address, int value){
 	if(address < 0 || address > DATA_MEM_SIZE){

@@ -3,6 +3,9 @@
 #ifndef __MIPSMEMORY_H__
 #define __MIPSMEMORY_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "mipsInstructions.h"
 
 #define DATA_MEM_SIZE 1028
@@ -30,6 +33,8 @@ typedef struct instruction
 
     char* addr;
 }memInstruct;
+
+void copyInstructMem(memInstruct* const dest, memInstruct* const src);
 
 
 extern int data_mem[DATA_MEM_SIZE];

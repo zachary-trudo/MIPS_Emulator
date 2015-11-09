@@ -54,10 +54,9 @@ void splitLoadToken(char* token, char* const imm, char* const rs)
 
 
 // Parse the file into instruction and data memory.
-void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMemSize)
+void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
 {
-    FILE* fp = infp;
-    memInstruct *memPtr = instructMem;
+    memInstruct *memPtr = &(instructMem[0]);
 
     memInstruct* curInstruct;
     char * line = NULL;
@@ -66,11 +65,11 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
     
     char * token;
 
-    while(!feof(fp))
+    while(!feof(infp))
     {
         while((read = getline(&line, &len, infp)) != -1)
         {
-            if (*line != '#')
+            if (*line != '#' && *line != '\n')
             {
                 // Create a new instruction.
                 curInstruct = (memInstruct*) malloc(sizeof(memInstruct));
@@ -80,6 +79,8 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                 replaceChar(line, ',', ' ');
                 // Replace all '#' with '\0' - as thats the end of the line as far as our parser is concerned. 
                 replaceChar(line, '#', '\0');
+                // Replace all '\n' with ' '
+                replaceChar(line, '\n', ' ');
 
                 // Grab first token.
                 token = strtok(line, " ");
@@ -103,14 +104,17 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                     {
                        if(!curInstruct->rd)
                        {
+                           curInstruct->rd = (char*) malloc(sizeof(token));
                            strcpy(curInstruct->rd, token);
                        }
                        else if(!curInstruct->rs)
                        {
+                           curInstruct->rs = (char*) malloc(sizeof(token));
                            strcpy(curInstruct->rs, token);
                        }
                        else
                        {
+                           curInstruct->rt = (char*) malloc(sizeof(token));
                            strcpy(curInstruct->rt, token);
                            break;
                        }
@@ -119,6 +123,7 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                     {
                         if(!curInstruct->rt)
                         {
+                            curInstruct->rt = (char*) malloc(sizeof(token));
                             strcpy(curInstruct->rt, token);
                         }
                         else
@@ -129,10 +134,12 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                             }
                             else if(!curInstruct->rs)
                             {
+                                curInstruct->rs = (char*) malloc(sizeof(token));
                                 strcpy(curInstruct->rs, token);
                             }
                             else
                             {
+                                curInstruct->imm = (char*) malloc(sizeof(token));
                                 strcpy(curInstruct->imm, token);
                                 break;
                             }
@@ -142,20 +149,24 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                     {
                         if(curInstruct->instr == J || curInstruct->instr == JAL)
                         {
+                            curInstruct->addr = (char*) malloc(sizeof(token));
                             strcpy(curInstruct->addr, token);
                             break;
                         }
                         else
                         {
+                            curInstruct->rs = (char*) malloc(sizeof(token));
                             strcpy(curInstruct->rs, token);
+                            break;
                         }
                     }
 
                     token = strtok(NULL, " ");
                 }
-                memPtr = curInstruct;
+                copyInstructMem(memPtr, curInstruct);
                 memPtr++;
-                instructMemSize++;
+                deleteMemInstruct(curInstruct);
+                (*instructMemSize)++;
             }
         }
     }
@@ -164,48 +175,43 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
     {
         free(line);
     }
-    if (token)
-    {
-        free(token);
-    }
     return;
 }
 
 // For debugging... Write out what we thought we got into a file. 
 void writeFile(FILE* const outfp, memInstruct* const instructMem, const int instructMemSize)
 {
-    FILE* fp = outfp;
     memInstruct *memPtr = instructMem;
     int i = 0;
 
     for(i; i < instructMemSize; i++)
     {
         fprintf(outfp, "\n");
-        printf("\n");
-        if(memPtr->instType)
-            fprintf(outfp, "type: %s ", instructTypes[memPtr->instType]);
-            printf("type: %s ", instructTypes[memPtr->instType]);
-        if(memPtr->LABEL)
-            fprintf(outfp, "LABEL: %s ", memPtr->LABEL);
-            printf("LABEL: %s ", memPtr->LABEL);
-        if(memPtr->instr)
-            fprintf(outfp, "instr: %s ", instructNames[memPtr->instr]);
-            printf("instr: %s ", instructNames[memPtr->instr]);
-        if(memPtr->rs)
-            fprintf(outfp, "rs: %s ", memPtr->rs);
-            printf("rs: %s ", memPtr->rs);
-        if(memPtr->rt)
-            fprintf(outfp, "rt: %s ", memPtr->rt);
-            printf("rt: %s ", memPtr->rt);
-        if(memPtr->rd)
-            fprintf(outfp, "rd: %s ", memPtr->rd);
-            printf("rd: %s ", memPtr->rd);
-        if(memPtr->imm)
-            fprintf(outfp, "imm: %s ", memPtr->imm);
-            printf("imm: %s ", memPtr->imm);
-        if(memPtr->addr)
-            fprintf(outfp, "addr: %s.", memPtr->addr);
-            printf("addr: %s.", memPtr->addr);
+        printf(" \n ");
+        fprintf(outfp, "type: %s ", (char*) instructTypes[memPtr->instType]);
+        printf("type: %s ", instructTypes[memPtr->instType]);
+        
+        fprintf(outfp, "LABEL: %s ", (char*) memPtr->LABEL);
+        printf("LABEL: %s ", memPtr->LABEL);
+        
+        fprintf(outfp, "instr: %s ", (char*) instructNames[memPtr->instr]);
+        printf("instr: %s ", instructNames[memPtr->instr]);
+        
+        fprintf(outfp, "rs: %s ", memPtr->rs);
+        printf("rs: %s ", memPtr->rs);
+        
+        fprintf(outfp, "rt: %s ", memPtr->rt);
+        printf("rt: %s ", memPtr->rt);
+        
+        fprintf(outfp, "rd: %s ", memPtr->rd);
+        printf("rd: %s ", memPtr->rd);
+        
+        fprintf(outfp, "imm: %s ", memPtr->imm);
+        printf("imm: %s ", memPtr->imm);
+        
+        fprintf(outfp, "addr: %s.", memPtr->addr);
+        printf("addr: %s.", memPtr->addr);
+        
         memPtr++;
     }
 }

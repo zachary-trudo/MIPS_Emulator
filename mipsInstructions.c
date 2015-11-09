@@ -29,7 +29,7 @@ const char* instructNames[NUM_OF_INSTRUCTS] = {
 const char* instructTypes[3] = {"RTYPE", "ITYPE", "JTYPE" };
 
 // Because C sucks it doesn't have an .upper function... I hate C.
-void charToUpper(char* str)
+void charToUpper(char* const str)
 {
     char* pStr = str;
 
@@ -40,6 +40,7 @@ void charToUpper(char* str)
             *pStr -= 'a';
             *pStr += 'A';
         }
+        pStr++;
     }
 }
 
@@ -73,7 +74,7 @@ Instructions getInstructFromChar(char* charInstruct)
 
     for (i; i < len;i++)
     {
-        if(strcmp(instructNames[i], charInstruct))
+        if(strcmp(instructNames[i], charInstruct) == 0)
         {
             returnVal = i;
             break;
