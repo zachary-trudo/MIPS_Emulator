@@ -10,5 +10,5 @@
 
 int make_test_program(mipsRegister* regs);
 int program_counter;
-int run_program();
+int run_program(int instruction_count, mipsRegister* mipsReg);
 #endif

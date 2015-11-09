@@ -6,7 +6,7 @@
 #include "mipsInstructions.h"
 
 #define DATA_MEM_SIZE 1028
-#define INSTR_MEM_SIZE 1028
+#define INSTR_MEM_SIZE 20560
 
 typedef struct mipsLabel
 {

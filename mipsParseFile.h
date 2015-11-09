@@ -4,9 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 #include "mipsInstructions.h"
 #include "mipsMemory.h"
+
+void init_parser_re();
 
 void replaceChar(char* str, char garbage, char replace);
 int containsChar(char* const str, char item);

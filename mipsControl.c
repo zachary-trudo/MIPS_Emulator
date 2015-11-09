@@ -22,13 +22,13 @@ int make_test_program(mipsRegister* regs){
 
 //run program, map to correct functions from InstructionSet.h based on instruction type
 //manage program counter (global instruction pointer).
-int run_program(){
-	int instruction_count;
+int run_program(int instruction_count, mipsRegister* mipsReg){
+
 	memInstruct cur_instr;
-	mipsRegister mipsReg = {0};
+	//mipsRegister mipsReg = {0};
 
 
-	instruction_count = make_test_program(&mipsReg);
+	//instruction_count = make_test_program(&mipsReg);
 
 	program_counter = 0;
 
@@ -37,11 +37,11 @@ int run_program(){
 		cur_instr = fetch_instr(program_counter);
 		program_counter += 1;
 
-		int *src_reg = getPointerToRegister(cur_instr.rs, &mipsReg);
-		int *target_reg = getPointerToRegister(cur_instr.rt, &mipsReg);
-		int *dest_reg = getPointerToRegister("$t0", &mipsReg);
+		int *src_reg = getPointerToRegister(cur_instr.rs, mipsReg);
+		int *target_reg = getPointerToRegister(cur_instr.rt, mipsReg);
+		int *dest_reg = getPointerToRegister("$t0", mipsReg);
 
-		printf("register pointer test %d\n", (dest_reg == (&mipsReg.t0)));
+		printf("register pointer test %d\n", (dest_reg == (mipsReg->t0)));
 		int result = -1, overflow = 0;
 
 		result = MIPS_ALU(*src_reg, *target_reg, &overflow, cur_instr.instr);
@@ -49,7 +49,7 @@ int run_program(){
 	}
 	
 
-	printf("Instruction!: %d + %d = %d\n", mipsReg.t2, mipsReg.t3, mipsReg.t0);
+	printf("Instruction!: %d + %d = %d\n", mipsReg->t2, mipsReg->t3, mipsReg->t0);
 	return 0;
 }
 

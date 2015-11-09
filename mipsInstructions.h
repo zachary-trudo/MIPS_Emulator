@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define NUM_OF_INSTRUCTS 27 
+#define NUM_OF_INSTRUCTS 28 
 
 typedef enum instructs  {
 	//Arithmetic RTYPE
@@ -25,8 +25,10 @@ typedef enum instructs  {
                                                     // 11 ITYPE (13 - 23)
     
     // Jump JTYPE
-    J, JAL, JR                                      // 3 JTYPE (24 - 26)
+    J, JAL, JR,                                      // 3 JTYPE (24 - 26)
 
+	// Save ITYPE
+	SW												//1 ITYPE
 	//Bitwise/shifts - UNUSED
 	//SLL, SLLV, SRA, SRAV, SRL, SRLV                 // Unused (27 - )
 } Instructions;
@@ -41,12 +43,3 @@ Instructions getInstructFromChar(char* charInstruct);
 
 #endif
 
-/*
-
-instruction parsing logic
-read labe lif any
-read instruction
-type of instruction determines what next 'token' should be
-	label, register, or immediate
-	
-*/
