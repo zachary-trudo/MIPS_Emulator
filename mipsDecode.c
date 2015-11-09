@@ -1,6 +1,7 @@
 #include "mipsDecode.h"
 
-int MIPS_DECODE(char *instruction){
+Instruction MIPS_DECODE(char *charInstruct){
+
 	switch(instruction){
 		case "add":
 			return ADD;

@@ -2,7 +2,7 @@
 
 
 int data_mem[DATA_MEM_SIZE];
-instruction instr_mem[INSTR_MEM_SIZE];
+memInstruct instr_mem[INSTR_MEM_SIZE];
 
 void save_data(int address, int value){
 	if(address < 0 || address > DATA_MEM_SIZE){
@@ -32,7 +32,6 @@ void save_program(instruction * program, int num_instr){
 	
 	instr_mem = program;
 }
-
 
 instruction fetch_instr(int address){
 	if(address < 0 || address > INSTR_MEM_SIZE){
