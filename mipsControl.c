@@ -58,6 +58,6 @@ int run_program(){
 	printf("Instruction!: %d + %d = %d\n", mipsReg.t2, mipsReg.t3, mipsReg.t0);
 	return 0;
 }
-#include <stdio.h>
+
 
 

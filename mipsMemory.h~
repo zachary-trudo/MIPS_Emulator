@@ -24,8 +24,13 @@ typedef struct instruction
 	int immediate;
 
 
-}memInstruct;
 
+<<<<<<< HEAD
+extern int data_mem[];
+extern instruction * instr_mem;
+=======
+
+}memInstruct;
 
 
 extern int data_mem[DATA_MEM_SIZE];
