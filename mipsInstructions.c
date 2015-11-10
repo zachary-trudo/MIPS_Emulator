@@ -17,14 +17,14 @@ const char* instructNames[NUM_OF_INSTRUCTS] = {
     // Branch ITYPE
     "BEQ", "BGTZ", "BLTZ", "BNE",           // 4 Items
     // Load ITYPE
-    "LW",                                   // 1 Item
-                                            // 11 ITYPE (13 - 23)
+    "LW", "SW",                          // 2 Item
+                                            // 12 ITYPE (13 - 24)
     
     // Jump JTYPE
-    "J", "JAL", "JR",                        // 3 JTYPE (24 - 26)
+    "J", "JAL", "JR",                        // 3 JTYPE (25 - 27)
 	
 	// Save ITYPE
-	"SW"									//1 ITYPE  27
+										//1 ITYPE  27
 	//Bitwise/shifts - UNUSED
     //"SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
 };
@@ -34,7 +34,6 @@ const char* instructTypes[3] = {"RTYPE", "ITYPE", "JTYPE" };
 // Because C sucks it doesn't have an .upper function... I hate C.
 void charToUpper(char* str)
 {
-	printf("Call to charToUpper\n");
     char* pStr = str;
 
     while(*pStr != '\0')
@@ -55,11 +54,11 @@ InstructionType getInstructionType(const Instructions instruct)
     {
         returnVal = RTYPE;
     }
-    else if (instruct >= 13 && instruct <= 23)
+    else if (instruct >= 13 && instruct <= 24)
     {
         returnVal = ITYPE;
     }
-    else if (instruct >= 24 && instruct <= 26)
+    else if (instruct >= 25 && instruct <= 27)
     {
         returnVal = JTYPE;
     }
@@ -72,10 +71,12 @@ Instructions getInstructFromChar(char* charInstruct)
 {
     Instructions returnVal = -1;
     int i = 0;
+	int comp = -1;
     charToUpper(charInstruct);
     for (i; i < NUM_OF_INSTRUCTS;i++)
     {
-        if(!strcmp(instructNames[i], charInstruct))
+		comp = strcmp(instructNames[i], charInstruct);
+        if(!comp)
         {
             returnVal = i;
             break;

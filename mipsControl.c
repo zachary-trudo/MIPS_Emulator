@@ -1,55 +1,49 @@
 #include "mipsControl.h"
-//make a test program, init necessary registers, save program to instruction memory
-int make_test_program(mipsRegister* regs){
-	memInstruct* one = (memInstruct*) malloc(sizeof(memInstruct));
-	one->instr = ADD;
-	one->rd = "$t1";
-	one->rs = "$t2";
-	one->rt = "$t3";
-
-	regs->gp = 0;
-	regs->t1 = 0;
-	regs->t2 = 5;
-	regs->t3 = 7;
-	
-	memInstruct* program = {one};
-    save_program(program);
-
-	int instruction_count = 1;
-	return instruction_count;
-}
 
 
-//run program, map to correct functions from InstructionSet.h based on instruction type
-//manage program counter (global instruction pointer).
+
+
+
+
 int run_program(int instruction_count, mipsRegister* mipsReg){
 
-	memInstruct cur_instr;
-	//mipsRegister mipsReg = {0};
-
-
-	//instruction_count = make_test_program(&mipsReg);
-
+	memInstruct* cur_instr;
 	program_counter = 0;
 
+	int *src_reg;
+	int *target_reg;
+	int *dest_reg;
+	cur_instr = instr_mem;
 
+	int rs, rt;
 	while(program_counter < instruction_count){
-		cur_instr = fetch_instr(program_counter);
 		program_counter += 1;
+		
 
-		int *src_reg = getPointerToRegister(cur_instr.rs, mipsReg);
-		int *target_reg = getPointerToRegister(cur_instr.rt, mipsReg);
-		int *dest_reg = getPointerToRegister("$t0", mipsReg);
+		/*not sure if this is an accurate model of which instructions use which register
+		  might want to use &program_counter for beq, for example	*/
+		if(cur_instr->instType==0){
+			dest_reg = getPointerToRegister(cur_instr->rd, mipsReg);
+			rs = getRegister(cur_instr->rs, mipsReg);
+			rt = getRegister(cur_instr->rt, mipsReg);
+		}else if(cur_instr->instType==1){
+			dest_reg = getPointerToRegister(cur_instr->rt, mipsReg);
+			rs = getRegister(cur_instr->rs, mipsReg);
+			rt = atoi(cur_instr->imm);
+		}else if(cur_instr->instType == 2){
+			dest_reg = NULL;
+		}
 
-		printf("register pointer test %d\n", (dest_reg == (mipsReg->t0)));
 		int result = -1, overflow = 0;
 
-		result = MIPS_ALU(*src_reg, *target_reg, &overflow, cur_instr.instr);
-		printf("Result from first instruction: %d \n", result);
+		result = MIPS_ALU(rs,rt, cur_instr->instr, &overflow);
+		if(dest_reg != NULL)		
+			*dest_reg = result;
+		cur_instr++;
 	}
-	
 
-	printf("Instruction!: %d + %d = %d\n", mipsReg->t2, mipsReg->t3, mipsReg->t0);
+	printf("Result ($t3): %d\n", mipsReg->t3);
+
 	return 0;
 }
 

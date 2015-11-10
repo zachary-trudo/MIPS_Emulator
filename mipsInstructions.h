@@ -13,6 +13,9 @@ typedef enum instructs  {
 	// SetLessThan RTYPE
     SLT,                                            // 1 Item
                                                     // 13 RTYPE (0 - 12)
+	/*need to support
+	slti, sltiu, sltu
+	*/
 
     // Arithmetic ITYPE
     ADDI, ADDIU, SUBI, SUBIU,                       // 4 Items

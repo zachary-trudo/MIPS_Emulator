@@ -5,6 +5,16 @@ struct charToRegister {
     int* reg;
 };
 
+void setRegister(int val, char * reg, mipsRegister *mipsReg){
+	int * reg_ptr = getPointerToRegister(reg, mipsReg);
+	
+	*reg_ptr=val;
+}
+
+int getRegister(char * reg, mipsRegister *mipsReg){
+	int * reg_ptr = getPointerToRegister(reg, mipsReg);
+	return *reg_ptr;
+}
 
 int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 {
@@ -62,16 +72,13 @@ int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 
     for(i; i < lenc2r; i++)
     {
-        if(strcmp(desiredReg, c2rDict[i].str))
+        if(strcmp(desiredReg, c2rDict[i].str)==0)
         {
-            retVal = c2rDict[i].reg;
+            return c2rDict[i].reg;
         }
     }
 
-    if(retVal)
-    {
-        return retVal;
-    }
+  
 
     printf("Register: %s, doesn't exist.", desiredReg);
     exit(1);

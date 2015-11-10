@@ -1,17 +1,6 @@
 #include "mipsParseFile.h"
 
-regex_t instruction_re;
 
-
-void init_parser_re(){
-	//instruction re
-	if(regcomp(&instruction_re, "[[:alnum:]]{3,5}", 0)){
-		printf("Could not compile instruction_re - mipsParseFile.c");
-		exit(1);
-	}
-
-	
-}
 void replaceChar(char *str, char garbage, char replace)
 {
     char *src, *dst;
@@ -64,28 +53,12 @@ void splitLoadToken(char* token, char* const imm, char* const rs)
     *rsPtr = '\0';
 }
 
-/*
-void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMemSize){
-	FILE* fp = infp;
-	memInstruct *memPtr = instructMem;
-
-	while(!feof(fp)){
-		while((read = getline(&line, &len, infp)) != -1){
-			char * ins = 
-		}
-	}
-	
-}
-
-
-*/
 // Parse the file into instruction and data memory.
 void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMemSize)
 {
-	printf("call to parseFile");
     FILE* fp = infp;
-    memInstruct *memPtr = instructMem;
-
+    memInstruct *memPtr = instr_mem;
+	int j = 0;
     memInstruct* curInstruct;
     char * line = NULL;
     size_t len  = 0;
@@ -94,83 +67,56 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
     char * token;
 	char * label;
 
-   // while(!feof(fp))
-    //{
-		printf("outer loop 1\n");
-        while(!feof(fp) && (read = getline(&line, &len, infp)) != -1)
+        while(!feof(infp) && (read = getline(&line, &len, infp)) != -1)
         {
-		printf("loop 2\n");
-            if (/*line != '#' && *line != '\n' &&*/ (int)strlen(line) > 1)
+            if ((int)strlen(line) > 1)
             {
-				printf("Reading line from file:\n%s\n", line);
-				//if(line[0] == '#' || line[0] == '\n'){
-					//continue;
-				//}
-				
 
-                // Create a new instruction.
-               curInstruct = (memInstruct*) malloc(sizeof(memInstruct));
-                curInstruct->instr = -1;
-				curInstruct->rd = -1;
-				curInstruct->rt = 0;
-				curInstruct->rs = 0;
+
+				curInstruct = init_memInstruct();
                 // Replace all ',' with ' '
                 replaceChar(line, ',', ' ');
 				replaceChar(line, '\t', ' ');
-				
-                // Replace all '#' with '\0' - as thats the end of the line as far as our parser is concerned. 
-                replaceChar(line, '#', '\0');
-				
+				//replaceChar(line, '#', '\0');
                 // Grab first token.
                 token = strtok(line, " ");
 
                 // If we're not at the end of the line or the beginning of a comment parse.
-                while(token && *token != '#' && *token != '\n')
+                while(token && token[0] != '#' && *token != '\n')
                 {
-					//label = strtok(token, ":");
-					//printf("parse label: %s \n", label);
-
-					printf("parse token: %s \n", token);
-					token = strcat(token, "\0");
-					printf("token: %s\n", token);
-					//no assigned instruction
                     if(curInstruct->instr == -1)
                     {
-						//Program hangs in charToUpper. Need to append "\0".
                         curInstruct->instr = getInstructFromChar(token);
-						printf("instruction: %d\n", curInstruct->instr);
                         if(curInstruct->instr == -1)
                         {
-							printf("found a label %s\n", token);
                             strcpy(&curInstruct->LABEL, token);
                         }
                         else
                         {
+							j++;
                             curInstruct->instType = getInstructionType(curInstruct->instr);
                         }
                     }
                     else if(curInstruct->instType == RTYPE)
                     {
-						printf("processing RTYPE instruction\n");
-                       if(curInstruct->rd == -1)
+                       if(!strlen(&curInstruct->rd))
                        {
-							printf("token %s\n", token);
                            strcpy(&curInstruct->rd, token);
                        }
-                       else if(!curInstruct->rs)
+                       else if(!strlen(&curInstruct->rs))
                        {
                            strcpy(&curInstruct->rs, token);
                        }
                        else
                        {
+						   replaceChar(token, '\n', '\0');
                            strcpy(&curInstruct->rt, token);
                            break;
                        }
                     }
                     else if (curInstruct->instType == ITYPE)
                     {
-						printf("processing ITYPE instruction\n");
-                        if(!curInstruct->rt)
+                        if(!strlen(&curInstruct->rt))
                         {
                             strcpy(&curInstruct->rt, token);
                         }
@@ -180,13 +126,20 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
                             {
                                 splitLoadToken(token, &curInstruct->imm, &curInstruct->rs);
                             }
-                            else if(!curInstruct->rs)
+                            else if(!strlen(&curInstruct->rs))
                             {
                                 strcpy(&curInstruct->rs, token);
                             }
                             else
                             {
-                                strcpy(&curInstruct->imm, token);
+								
+								replaceChar(token, '\n', '\0');
+								if(isalpha(token[0])){
+									//Assuming mips labels cannot start with a digit, need to look into this
+									strcpy(&curInstruct->LABEL, token);
+								}else{
+                                	strcpy(&curInstruct->imm, token);
+								}
                                 break;
                             }
                         }
@@ -206,28 +159,20 @@ void parseFile(FILE* const infp, memInstruct* const instructMem, int* instructMe
 
                     token = strtok(NULL, " ");
                 }
-                memPtr = curInstruct;
-                memPtr++;
-                instructMemSize++;
-            }
-			printf("bad line\n");
-			if(feof(fp)){
-				break;
-			}
-        }
-   // }
 
-    /*if (line)
-    {
-		printf("freeing line");
-       // free(line);
-    }
-    if (token)
-    {
-		printf("freeing token");
-       // free(token);
-    }*/
-	printf("returning from parsefile");
+					if(curInstruct->instr != -1){
+						save_instr(curInstruct, j-1);
+					}
+                memPtr++;
+
+                instructMemSize++;
+				
+				free(curInstruct);
+            }
+        }
+
+    
+        free(line);
     return;
 }
 // For debugging... Write out what we thought we got into a file. 
