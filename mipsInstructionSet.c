@@ -6,7 +6,7 @@
 #include "mipsInstructionSet.h"
 
 // Mips ALU, should work.
-int MIPS_ALU(const int rs, const int rt, int *overflow, const Instruction instruction)
+int MIPS_ALU(const int rs, const int rt, Instructions instruction, int *overflow)
 {
     int returnVal = 0;
     switch(instruction)

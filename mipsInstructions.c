@@ -67,7 +67,7 @@ InstructionType getInstructionType(const Instructions instruct)
 }
 
 
-Instruction getInstructFromChar(char* charInstruct)
+Instructions getInstructFromChar(char* charInstruct)
 {
     Instructions returnVal = -1;
     int i = 0;
