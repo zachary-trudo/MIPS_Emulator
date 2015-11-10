@@ -4,8 +4,8 @@
 #define __MIPSDECODE_H__
 
 #include "mipsInstructions.h"
-
-Instruction MIPS_DECODE(char *instruction);
+#include "mipsMemory.h"
+Instructions MIPS_DECODE(const memInstruct* instruct);
 
 #endif
 

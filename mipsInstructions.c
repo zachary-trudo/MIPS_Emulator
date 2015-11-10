@@ -1,6 +1,7 @@
 #include "mipsInstructions.h"
+#include <stdio.h>
 
-const char* instructNames[31] = {
+const char* instructNames[NUM_OF_INSTRUCTS] = {
 	//Arithmetic RTYPE
 	"ADD", "ADDU", "SUB", "SUBU", "MULT", "MULTU", "DIV", "DIVU",   // 8 Items
     // Logical RTYPE
@@ -16,15 +17,19 @@ const char* instructNames[31] = {
     // Branch ITYPE
     "BEQ", "BGTZ", "BLTZ", "BNE",           // 4 Items
     // Load ITYPE
-    "LW",                                   // 1 Item
-                                            // 11 ITYPE (13 - 23)
+    "LW", "SW",                          // 2 Item
+                                            // 12 ITYPE (13 - 24)
     
     // Jump JTYPE
-    "J", "JAL", "JR",                        // 3 JTYPE (24 - 26)
-
+    "J", "JAL", "JR",                        // 3 JTYPE (25 - 27)
+	
+	// Save ITYPE
+										//1 ITYPE  27
 	//Bitwise/shifts - UNUSED
-    "SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
+    //"SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
 };
+
+const char* instructTypes[3] = {"RTYPE", "ITYPE", "JTYPE" };
 
 // Because C sucks it doesn't have an .upper function... I hate C.
 void charToUpper(char* str)
@@ -38,22 +43,22 @@ void charToUpper(char* str)
             *pStr -= 'a';
             *pStr += 'A';
         }
+		pStr += 1;
     }
 }
 
-InstructionType getInstructionType(Instruction instruct)
+InstructionType getInstructionType(const Instructions instruct)
 {
-	//This was originially initialized to null, but that gave a type error.
     InstructionType returnVal = -1;
     if (instruct >= 0 && instruct <= 12)
     {
         returnVal = RTYPE;
     }
-    else if (instruct >= 13 && instruct <= 23)
+    else if (instruct >= 13 && instruct <= 24)
     {
         returnVal = ITYPE;
     }
-    else if (instruct >= 24 && instruct <= 26)
+    else if (instruct >= 25 && instruct <= 27)
     {
         returnVal = JTYPE;
     }
@@ -64,20 +69,19 @@ InstructionType getInstructionType(Instruction instruct)
 
 Instruction getInstructFromChar(char* charInstruct)
 {
-    Instruction returnVal = -1;
+    Instructions returnVal = -1;
     int i = 0;
-    int len = sizeof(instructNames) / sizeof(char);
-
+	int comp = -1;
     charToUpper(charInstruct);
-
-    for (i; i < len;i++)
+    for (i; i < NUM_OF_INSTRUCTS;i++)
     {
-        if(strcmp(instructNames[i], charInstruct))
+		comp = strcmp(instructNames[i], charInstruct);
+        if(!comp)
         {
             returnVal = i;
             break;
         }
     }
-
+	
     return returnVal;
 }

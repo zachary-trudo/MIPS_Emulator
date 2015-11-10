@@ -2,6 +2,7 @@
 // Change Log:  Initial Commit - Nov 6, 2015
 //              Fleshed out all the instructions - Nov 7, 2015
 #include <stdio.h>
+#include <stdlib.h>
 #include "mipsInstructionSet.h"
 
 // Mips ALU, should work.
@@ -13,7 +14,6 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instruction instru
         // Arithmetic Ops:
         case ADD:
             returnVal = MIPS_ADD(rs, rt, overflow);
-			printf("MIPS_ALU, case=ADD. return: %d \n", returnVal);
             break;
         case ADDI:
             returnVal = MIPS_ADDI(rs, rt, overflow);
@@ -57,17 +57,15 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instruction instru
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow)
 {
-	printf("MIPS_ADD, rs = %d, rt = %d\n", rs, rt);
     int returnVal = rs + rt;
-	printf("MIPS_ADD, returnVal = %d\n", returnVal);
     *overflow = returnVal > MAXVALUE;
     return returnVal;
 }
 
 // The functionality of ADDI is exactly the same as ADD... so I'm just going to call it.
-int MIPS_ADDI(const int rs, const int immediate, int *overflow)
+int MIPS_ADDI(const int rd, const int immediate, int *overflow)
 {
-    return MIPS_ADD(rs, immediate, overflow);
+    return MIPS_ADD(rd, immediate, overflow);
 }
 
 // ADDU doesn't care about overflow - so we don't set or unset it. 

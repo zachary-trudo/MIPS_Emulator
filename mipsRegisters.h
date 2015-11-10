@@ -67,6 +67,10 @@ struct registers
 
 typedef struct registers mipsRegister;
 
+void setRegister(int val, char * reg, mipsRegister *mipsReg);
+int getRegister(char * reg, mipsRegister *mipsReg);
 
-int * getPointerToRegister(const char* desiredReg, mipsRegister *mipsReg);
+
+
+int* getPointerToRegister(char* const desiredReg, mipsRegister *mipsReg);
 #endif

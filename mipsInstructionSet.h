@@ -14,7 +14,7 @@
 
 
 // ALU
-int MIPS_ALU(const int rs, const int rt, int *overflow, const Instruction instruction);
+int MIPS_ALU(const int rs, const int rt, Instructions instruction,  int *overflow);
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow);
