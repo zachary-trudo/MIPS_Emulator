@@ -4,9 +4,15 @@
 
 
 int run_program(int instruction_count, mipsRegister* mipsReg){
-
 	memInstruct* cur_instr;
 	program_counter = 0;
+
+	int *src_reg;
+	int *target_reg;
+	int *dest_reg;
+	cur_instr = instr_mem;
+
+	int rs, rt;
 	while(program_counter < instruction_count){
 		program_counter += 1;
 		
