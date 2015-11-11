@@ -122,23 +122,8 @@ void initDataMemory(dataMemory* datMem)
 {
     int initSize = 10;
     
-    datMem->t0 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t1 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t2 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t3 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t4 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t5 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t6 = (int*) malloc(sizeof(int) * initSize);
-    datMem->t7 = (int*) malloc(sizeof(int) * initSize);
-
-    datMem->sizet0 = initSize;
-    datMem->sizet1 = initSize;
-    datMem->sizet2 = initSize;
-    datMem->sizet3 = initSize;
-    datMem->sizet4 = initSize;
-    datMem->sizet5 = initSize;
-    datMem->sizet6 = initSize;
-    datMem->sizet7 = initSize;
+    datMem->data = (int*) malloc(sizeof(int) * initSize);
+    datMem->size = initSize;
 }
 
 void expandDataMemory(int* addr, int* size)
@@ -150,22 +135,14 @@ void expandDataMemory(int* addr, int* size)
 
 void deleteDataMemory(dataMemory* datMem)
 {
-    free(datMem->t0);
-    free(datMem->t1);
-    free(datMem->t2);
-    free(datMem->t3);
-    free(datMem->t4);
-    free(datMem->t5);
-    free(datMem->t6);
-    free(datMem->t7);
-
+    free(datMem->data);
     free(datMem);
 }
 
 
 void storeData(int* addr, int* size, int index, int data)
 {
-    if(*size = index)
+    while(*size <= index)
     {
         expandDataMemory(addr, size);
     }
@@ -182,60 +159,12 @@ int loadData(int* addr, int size, int index)
 
 int* getDataPointer(char* str, dataMemory* dataMem)
 {
-    int* retVal;
-    int arraySize = 8;
-    struct char2dataDict dataMap[] = {
-        // data, size, str
-        dataMem->t0, &dataMem->sizet0, "$t0",
-        dataMem->t1, &dataMem->sizet1, "$t1",
-        dataMem->t2, &dataMem->sizet2, "$t2",
-        dataMem->t3, &dataMem->sizet3, "$t3",
-        dataMem->t4, &dataMem->sizet4, "$t4",
-        dataMem->t5, &dataMem->sizet5, "$t5",
-        dataMem->t6, &dataMem->sizet6, "$t6",
-        dataMem->t7, &dataMem->sizet7, "$t7"
-    };
-
-    int i;
-    for(i = 0; i < arraySize; i++)
-    {
-        if(strcmp(dataMap[i].str, str) == 0)
-        {
-            retVal = dataMap[i].data;
-            break;
-        }
-    }
-
-    return retVal;
+    return dataMem->data;
 }
 
-int* getSize(dataMemory* dataMem, int* rs)
+int* getSize(dataMemory* dataMem)
 {
-    int arraySize = 8;
-    int* retVal;
-    struct char2dataDict dataMap[] = {
-        // data, size, str
-        dataMem->t0, &dataMem->sizet0, "$t0",
-        dataMem->t1, &dataMem->sizet1, "$t1",
-        dataMem->t2, &dataMem->sizet2, "$t2",
-        dataMem->t3, &dataMem->sizet3, "$t3",
-        dataMem->t4, &dataMem->sizet4, "$t4",
-        dataMem->t5, &dataMem->sizet5, "$t5",
-        dataMem->t6, &dataMem->sizet6, "$t6",
-        dataMem->t7, &dataMem->sizet7, "$t7"
-    };
-    
-   int i;
-   for (i = 0; i < arraySize; i++)
-   {
-       if(rs == dataMap[i].data)
-       {
-            retVal = dataMap[i].size;
-            break;
-       }
-   }
-
-   return retVal;
+   return &dataMem->size;
 }
 
             

@@ -33,6 +33,13 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
             returnVal = MIPS_OR(rs, rt);
             break;
 
+        case SLT:
+            returnVal = MIPS_SLT(rs, rt);
+            break;
+        case SLTU:
+            returnVal = MIPS_SLTU(rs, rt);
+            break;
+
         // Unimplemented Instruction:
         default:
             printf("Unimplemented Instruction, or not R-Type OP: %s\n", instructNames[instruction]);
@@ -63,7 +70,7 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
 
         // Unimplemented Instruction:
         default:
-            printf("Unimplemented Instruction, or not R-Type OP: %s\n", instructNames[instruction]);
+            printf("Unimplemented Instruction, or not I-Type OP: %s\n", instructNames[instruction]);
             exit(1);
             break;
     }
@@ -73,7 +80,7 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
 
 void MIPS_MEMORY(int* rt, int* rs, const int imm, const Instructions instruction, dataMemory* datMem)
 {
-    int* dataSize = getSize(datMem, rs);
+    int* dataSize = getSize(datMem);
     switch(instruction)
     {
         case SW:
@@ -89,14 +96,24 @@ void MIPS_MEMORY(int* rt, int* rs, const int imm, const Instructions instruction
     }
 }
 
+void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
+{
+    if(curInstruct->instruction == BEQ)
+    {
+        MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+    }
+    else if(curInstruct->instruction == BNE)
+    {
+        MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+    }
+}
+
 
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow)
 {
-	printf("MIPS_ADD, rs = %d, rt = %d\n", rs, rt);
     int returnVal = rs + rt;
-	printf("MIPS_ADD, returnVal = %d\n", returnVal);
     *overflow = returnVal > MAXVALUE;
     return returnVal;
 }
@@ -158,59 +175,42 @@ int MIPS_OR(const int rs, const int rt)
 // Set Less Than
 int MIPS_SLT(const int rs, const int rt)
 {
-    return rs > rt;
+    int retVal = rs < rt;
+    printf("%i < %i = %i", rs, rt, retVal);
+    return retVal;
 }
 
 
 int MIPS_SLTU(const int rs, const int rt)
 {
-    return rs > rt;
+    int retVal = rs < rt;
+    printf("%i < %i = %i", rs, rt, retVal);
+    return retVal;
 }
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
 // According to mips documentation brach operations use the Subtract functions to do the comparison. 
-int MIPS_BEQ(const int rs, const const int rt, char *LABEL, int *nextInstruction)
+void MIPS_BEQ(const int rs, const const int rt, const int addr, int *nextInstruction)
 {
-    int returnVal = 0;
     if (MIPS_SUBU(rs, rt) == 0)
     {
-        MIPS_J(LABEL, nextInstruction);
-        returnVal = 1;
+        MIPS_J(addr, nextInstruction);
     }
-    return returnVal;
-}
-
-// Branch if greater than zero
-int MIPS_BGTZ(const int rs, char *LABEL, int *nextInstruction)
-{
-    // MIPS_SLT will return 0 if rs is greater than 0. Which we pass to BEQ which will perform appropriate operations.
-    return MIPS_BEQ(MIPS_SLT(rs, 0), 0, LABEL, nextInstruction);
-}
-
-// Branc if less than zero.
-int MIPS_BLTZ(const int rs, char *LABEL, int *nextInstruction)
-{
-    // MIPS_SLT will return 1 if rs is less than 1 and branch if necessary. 
-    return MIPS_BEQ(MIPS_SLT(rs, 0), 1, LABEL, nextInstruction);
 }
 
 
-int MIPS_BNE(const int rs, const int rt, char *LABEL, int *nextInstruction)
+void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 {
-    int returnVal = 0;
     if (MIPS_SUBU(rs, rt) != 0)
     {
-        MIPS_J(LABEL, nextInstruction);
-        returnVal = 1;
+        MIPS_J(addr, nextInstruction);
     }
-    return returnVal;
 }
 
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
-int MIPS_J(char *LABEL, int *nextInstruction)
+void MIPS_J(int addr, int *nextAddress)
 {
-
-
+    *nextAddress = addr;
 }
 
 // Load Operations
@@ -225,7 +225,6 @@ void MIPS_LW(int imm, int* rs, int* size, int* rt)
 // Returns0 for failure, 1 for success.
 void MIPS_SW(int imm, int* rs, int* size, int rt)
 {
-    int retVal = 0;
     storeData(rs, size, imm / 4, rt);
 }
 

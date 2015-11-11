@@ -19,10 +19,14 @@ int decodeAddr(const char* const addr, const memInstruct* const allInstructs, co
     int returnVal = 0;
     int found = 0;
     memInstruct* instructPtr = allInstructs;
+    char* localAddr = (char*) malloc(sizeof(addr));
+    strcpy(localAddr, addr);
+    charToUpper(localAddr);
+
 
     for (returnVal = 0; returnVal < instructLength; returnVal++) 
     {
-        if(strcmp(instructPtr->LABEL, addr) == 0)
+        if(instructPtr->LABEL && strcmp(instructPtr->LABEL, localAddr) == 0)
         {
             found = 1;
             break;

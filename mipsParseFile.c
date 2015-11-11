@@ -129,6 +129,8 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                 replaceChar(line, '#', '\0');
                 // Replace all '\n' with ' '
                 replaceChar(line, '\n', ' ');
+                // Replace all ':' with ' '
+                replaceChar(line, ':', ' ');
 
                 // Grab first token.
                 numWords = numberOfWords(line);
@@ -194,6 +196,12 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                             {
                                 curInstruct->rs = (char*) malloc(sizeof(token));
                                 strcpy(curInstruct->rs, token);
+                            }
+                            else if(curInstruct->instr == BEQ || curInstruct->instr == BNE)
+                            {
+                                curInstruct->addr = (char*) malloc(sizeof(token));
+                                strcpy(curInstruct->addr, token);
+                                break;
                             }
                             else
                             {

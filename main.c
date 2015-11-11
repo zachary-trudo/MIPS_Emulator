@@ -2,6 +2,8 @@
 // Changelog:   Initial Creation - Nov 6, 2015
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
 #include "mipsRegisters.h"
 #include "mipsInstructionSet.h"
 #include "mipsMemory.h"
@@ -56,6 +58,7 @@ int main(int argc, char *argv[])
        
        // Decode Instruction
        curDecodedInstruct = instructDecode(instructMem, instructMemSize, currentInstruct, mipsReg, dataReg);
+       printf("\n%s", instructNames[currentInstruct->instr]);
 
        if(curDecodedInstruct->instructType == RTYPE)
        {
@@ -67,29 +70,36 @@ int main(int argc, char *argv[])
            {
                MIPS_MEMORY(curDecodedInstruct->rt, curDecodedInstruct->rs, curDecodedInstruct->imm, curDecodedInstruct->instruction, dataReg);
            }
+           else if(curDecodedInstruct->instruction == BEQ || curDecodedInstruct->instruction == BNE)
+           {
+               MIPS_BRANCH(curDecodedInstruct, &nextAddress); 
+           }
            else
            {
                *curDecodedInstruct->rt = MIPS_ALU_IMM(*curDecodedInstruct->rs, curDecodedInstruct->imm, &overflow, curDecodedInstruct->instruction);
            }
        }
-       /*if(curDecodedInstruct->instructionType == JTYPE)
+       if(curDecodedInstruct->instructType == JTYPE)
        {
-            nextInstruction = MIPS_ALU_JUMP(curDecodedInstruct);
-       }*/
+            MIPS_J(curDecodedInstruct->addr, &nextAddress);
+       }
+       if(curDecodedInstruct->instructType == NONETYPE)
+       {
+           if(currentAddress == instructMemSize - 1)
+           {
+               break;
+           }
 
 
-
-
+       }
+        
+       wait(10);
 
        // Execute
        //executeInstruct(currentInstruct, &mipsReg, &currentAddress);
        //
-
        currentAddress = nextAddress;
        nextAddress++;
-	
-
-       
     }
   
     for(i = instructMemSize-1; i >= 0; i--)
