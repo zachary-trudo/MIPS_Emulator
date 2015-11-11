@@ -34,15 +34,43 @@ typedef struct instruction
     char* addr;
 }memInstruct;
 
+void initMemInstruct(memInstruct* inst);
 void copyInstructMem(memInstruct* const dest, memInstruct* const src);
+void deleteMemInstruct(memInstruct* inst);
+void deleteMemInstructOnStack(memInstruct* inst);
 
+typedef struct dataMemory
+{
+    int* t0;
+    int* t1;
+    int* t2;
+    int* t3;
+    int* t4;
+    int* t5;
+    int* t6;
+    int* t7;
 
-extern int data_mem[DATA_MEM_SIZE];
-extern memInstruct instr_mem[INSTR_MEM_SIZE];
+    int sizet0;
+    int sizet1;
+    int sizet2;
+    int sizet3;
+    int sizet4;
+    int sizet5;
+    int sizet6;
+    int sizet7;
+}dataMemory;
 
-void save_data(int address, int value);
-int load_data(int address);
+void initDataMemory(dataMemory* datMem);
+void expandDataMemory(int* addr, int* size);
+void deleteDataMemory(dataMemory* datMem);
 
-void save_program(const memInstruct* program);
-memInstruct fetch_instr(int address);
+struct char2dataDict
+{
+    int* data;
+    int* size;
+    char* str;
+};
+
+int* getDataPointer(char* str, dataMemory* datMem);
+int* getSize(dataMemory* datMem, int* rs);
 #endif

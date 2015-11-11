@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "mipsInstructionSet.h"
 
+
 // Mips ALU, should work.
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction)
 {
@@ -13,28 +14,15 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
         // Arithmetic Ops:
         case ADD:
             returnVal = MIPS_ADD(rs, rt, overflow);
-			printf("MIPS_ALU, case=ADD. return: %d \n", returnVal);
-            break;
-        case ADDI:
-            returnVal = MIPS_ADDI(rs, rt, overflow);
             break;
         case ADDU:
             returnVal = MIPS_ADDU(rs, rt);
             break;
-        case ADDIU:
-            returnVal = MIPS_ADDIU(rs, rt);
-            break;
         case SUB:
             returnVal = MIPS_SUB(rs, rt, overflow);
             break;
-        case SUBI:
-            returnVal = MIPS_SUBI(rs, rt, overflow);
-            break;
         case SUBU:
             returnVal = MIPS_SUBU(rs, rt);
-            break;
-        case SUBIU:
-            returnVal = MIPS_SUBIU(rs, rt);
             break;
 
         // Logical Operations:
@@ -53,6 +41,55 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
     }
     return returnVal;
 }
+
+int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions instruction)
+{
+    int returnVal = 0;
+    switch(instruction)
+    {
+        // Arithmetic Ops:
+        case ADDI:
+            returnVal = MIPS_ADDI(rs, rt, overflow);
+            break;
+        case ADDIU:
+            returnVal = MIPS_ADDIU(rs, rt);
+            break;
+        case SUBI:
+            returnVal = MIPS_SUBI(rs, rt, overflow);
+            break;
+        case SUBIU:
+            returnVal = MIPS_SUBIU(rs, rt);
+            break;
+
+        // Unimplemented Instruction:
+        default:
+            printf("Unimplemented Instruction, or not R-Type OP: %s\n", instructNames[instruction]);
+            exit(1);
+            break;
+    }
+    return returnVal;
+}
+
+
+void MIPS_MEMORY(int* rt, int* rs, const int imm, const Instructions instruction, dataMemory* datMem)
+{
+    int* dataSize = getSize(datMem, rs);
+    switch(instruction)
+    {
+        case SW:
+            MIPS_SW(imm, rs, dataSize, *rt);
+            break;
+        case LW:
+            MIPS_LW(imm, rs, dataSize, rt);
+            break;
+        default:
+            printf("sOmEtHiNg went terribly wrong. Should be impossible to get here.");
+            exit(1);
+            break;
+    }
+}
+
+
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow)
@@ -177,7 +214,23 @@ int MIPS_J(char *LABEL, int *nextInstruction)
 }
 
 // Load Operations
-//int MIPS_LW(const int rt, memoryAddress *location); 
+
+// imm = index * 4, rs = addr
+void MIPS_LW(int imm, int* rs, int* size, int* rt)
+{
+    *rt = loadData(rs, size, imm / 4);
+}
+
+// imm = index, rs = addr, size = size, rt = storeValue
+// Returns0 for failure, 1 for success.
+void MIPS_SW(int imm, int* rs, int* size, int rt)
+{
+    int retVal = 0;
+    storeData(rs, size, imm / 4, rt);
+}
+
+
+
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

@@ -12,7 +12,7 @@
 struct registers
 {
     // Zero is always zero.
-    const int zero;
+    int zero;
 
     // Aseembler Temporary
     int at;
@@ -64,9 +64,9 @@ struct registers
     // Return Address
     int ra;
 };
-
 typedef struct registers mipsRegister;
 
-
-int* getPointerToRegister(char* const desiredReg, mipsRegister *mipsReg);
+void initRegister(mipsRegister* mipsReg);
+char* registerList[32];
+int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg);
 #endif

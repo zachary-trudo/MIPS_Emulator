@@ -1,13 +1,14 @@
 #include "mipsInstructions.h"
 
 const char* instructNames[NUM_OF_INSTRUCTS] = {
+    "NONE",                                                         // 1 NONE (0)
 	//Arithmetic RTYPE
 	"ADD", "ADDU", "SUB", "SUBU", "MULT", "MULTU", "DIV", "DIVU",   // 8 Items
     // Logical RTYPE
 	"AND", "NOR", "OR", "XOR",                                      // 4 Items
 	// SetLessThan RTYPE
-    "SLT",                                                          // 1 Item
-                                                                    // 13 RTYPE (0 - 12)
+    "SLT","SLTU",                                                    // 2 Item
+                                                                    // 14 RTYPE (1 - 14)
 
     // Arithmetic ITYPE
     "ADDI", "ADDIU", "SUBI", "SUBIU",       // 4 Items
@@ -17,16 +18,18 @@ const char* instructNames[NUM_OF_INSTRUCTS] = {
     "BEQ", "BGTZ", "BLTZ", "BNE",           // 4 Items
     // Load ITYPE
     "LW",                                   // 1 Item
-                                            // 11 ITYPE (13 - 23)
+    // Store ITYPE                          
+    "SW",                                   // 1 Items
+                                            // 12 ITYPE (15 - 26)
     
     // Jump JTYPE
-    "J", "JAL", "JR"                        // 3 JTYPE (24 - 26)
+    "J", "JAL", "JR"                        // 3 JTYPE (27 - 29)
 
 	//Bitwise/shifts - UNUSED
-    //"SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (27 - )
+    //"SLL", "SLLV", "SRA", "SRAV", "SRL", "SRLV"     // Unused (30 - )
 };
 
-const char* instructTypes[3] = {"RTYPE", "ITYPE", "JTYPE" };
+const char* instructTypes[4] = {"NONETYPE", "RTYPE", "ITYPE", "JTYPE" };
 
 // Because C sucks it doesn't have an .upper function... I hate C.
 void charToUpper(char* const str)
@@ -46,18 +49,22 @@ void charToUpper(char* const str)
 
 InstructionType getInstructionType(const Instructions instruct)
 {
-    InstructionType returnVal = -1;
-    if (instruct >= 0 && instruct <= 12)
+    InstructionType returnVal = NONETYPE;
+    if (instruct > 0 && instruct <= 14)
     {
         returnVal = RTYPE;
     }
-    else if (instruct >= 13 && instruct <= 23)
+    else if (instruct >= 15 && instruct <= 26)
     {
         returnVal = ITYPE;
     }
-    else if (instruct >= 24 && instruct <= 26)
+    else if (instruct >= 27 && instruct <= 29)
     {
         returnVal = JTYPE;
+    }
+    else
+    {
+        printf("Instruction type unknown");
     }
 
     return returnVal;
@@ -66,9 +73,9 @@ InstructionType getInstructionType(const Instructions instruct)
 
 Instructions getInstructFromChar(char* charInstruct)
 {
-    Instructions returnVal = -1;
+    Instructions returnVal = NONE;
     int i = 0;
-    int len = sizeof(instructNames) / sizeof(char);
+    int len = NUM_OF_INSTRUCTS;
 
     charToUpper(charInstruct);
 

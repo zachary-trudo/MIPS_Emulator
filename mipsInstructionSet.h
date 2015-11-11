@@ -15,6 +15,8 @@
 
 // ALU
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
+int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions instruction);
+void MIPS_MEMORY(int* rt,  int* rs, const int imm, const Instructions instruction, dataMemory* datMem);
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow);
@@ -46,7 +48,8 @@ int MIPS_BNE(const int rs, const int rt, char *LABEL, int *nextInstruction);
 int MIPS_J(char *LABEL, int *nextInstruction);
 
 // Load Operations
-//int MIPS_LW(const int rt, memoryAddress *location); 
+void MIPS_SW(int imm, int* rs, int* size, int rt);
+void MIPS_LW(int imm, int* rs, int* size, int* rt);
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

@@ -1,5 +1,51 @@
 #include "mipsRegisters.h"
 
+void initRegister(mipsRegister* mipsReg)
+{
+    mipsReg->zero = 0;
+    mipsReg->at   = 0;
+
+    mipsReg->v0   = 0;
+    mipsReg->v1   = 0;
+
+    mipsReg->a0   = 0;
+    mipsReg->a1   = 0;
+    mipsReg->a2   = 0;
+    mipsReg->a3   = 0;
+
+    mipsReg->t0   = 0;
+    mipsReg->t1   = 0;
+    mipsReg->t2   = 0;
+    mipsReg->t3   = 0;
+    mipsReg->t4   = 0;
+    mipsReg->t5   = 0;
+    mipsReg->t6   = 0;
+    mipsReg->t7   = 0;
+    mipsReg->t8   = 0;
+    mipsReg->t9   = 0;
+
+    mipsReg->s0   = 0;
+    mipsReg->s1   = 0;
+    mipsReg->s2   = 0;
+    mipsReg->s3   = 0;
+    mipsReg->s4   = 0;
+    mipsReg->s5   = 0;
+    mipsReg->s6   = 0;
+    mipsReg->s7   = 0;
+    mipsReg->s8   = 0;
+
+
+    mipsReg->k0   = 0;
+    mipsReg->k1   = 0;
+
+    mipsReg->gp   = 0;
+
+    mipsReg->sp   = 0;
+
+    mipsReg->ra   = 0;
+}
+
+
 struct charToRegister {
     char* str;
     int* reg;
@@ -62,7 +108,7 @@ int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 
     for(i; i < lenc2r; i++)
     {
-        if(strcmp(desiredReg, c2rDict[i].str))
+        if(strcmp(desiredReg, c2rDict[i].str) == 0)
         {
             retVal = c2rDict[i].reg;
         }

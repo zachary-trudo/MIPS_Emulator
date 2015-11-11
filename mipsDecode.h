@@ -5,8 +5,22 @@
 
 #include "mipsInstructions.h"
 #include "mipsMemory.h"
+#include "mipsRegisters.h"
 
-Instructions MIPS_DECODE(const memInstruct* instruct);
+typedef struct decoded
+{
+    Instructions instruction;
+    InstructionType instructType;
+    int *rd;
+    int *rt;
+    int *rs;
+    int imm;
+    
+    int addr;
+} decodedInstruct;
+
+
+decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int instructLength, const memInstruct* const instruct, mipsRegister* mipsReg, dataMemory* dataReg);
 
 #endif
 

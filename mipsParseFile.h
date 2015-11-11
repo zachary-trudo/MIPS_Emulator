@@ -8,6 +8,7 @@
 #include "mipsInstructions.h"
 #include "mipsMemory.h"
 
+void stripLeadingWhiteSpace(char* str);
 void replaceChar(char* str, char garbage, char replace);
 int containsChar(char* const str, char item);
 void splitLoadToken(char* token, char* const imm, char* const rs);
