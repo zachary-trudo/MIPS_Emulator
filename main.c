@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
        {
            if(curDecodedInstruct->instruction == LW || curDecodedInstruct->instruction == SW)
            {
-               MIPS_MEMORY(curDecodedInstruct->rt, curDecodedInstruct->rs, curDecodedInstruct->imm, curDecodedInstruct->instruction, dataReg);
+               MIPS_MEMORY(curDecodedInstruct->rt, curDecodedInstruct->rs, &curDecodedInstruct->imm, curDecodedInstruct->instruction, dataReg);
            }
            else if(curDecodedInstruct->instruction == BEQ || curDecodedInstruct->instruction == BNE)
            {
@@ -92,16 +92,26 @@ int main(int argc, char *argv[])
 
 
        }
-        
-       wait(10);
+      
+       int returnTime = time(0) + 2;
 
        // Execute
        //executeInstruct(currentInstruct, &mipsReg, &currentAddress);
        //
        currentAddress = nextAddress;
        nextAddress++;
+
+        printf("\n");
+        for(i = 0; i < *getSize(dataReg); i++)
+        {
+            if(dataReg->data[i] != 0)
+                printf("%i : %i\n", i, dataReg->data[i]);
+        }
+        printf("\n");
+        printRegister(mipsReg);
+
     }
-  
+ 
     for(i = instructMemSize-1; i >= 0; i--)
         deleteMemInstructOnStack(&instructMem[i]);
     close(infp);

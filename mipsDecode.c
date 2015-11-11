@@ -53,14 +53,7 @@ decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int
     }
     if(instruct->rs)
     {
-        if(instruct->instr == LW || instruct->instr == SW)
-        {
-            mipsInstruct->rs = getDataPointer(instruct->rs, dataReg);
-        }
-        else
-        {
-            mipsInstruct->rs = getPointerToRegister(instruct->rs, mipsReg);
-        }
+        mipsInstruct->rs = getPointerToRegister(instruct->rs, mipsReg);
     }
     if(instruct->rt)
     {
