@@ -50,6 +50,52 @@ struct charToRegister {
     int* reg;
 };
 
+void printRegister(mipsRegister* mipsReg)
+{
+    printf("\n$zero ,%i\n", mipsReg->zero);
+    printf("$at ,%i\n", mipsReg->at);
+    
+    printf("$v0 ,%i\n", mipsReg->v0);
+    printf("$v1 ,%i\n", mipsReg->v1);
+
+    printf("$a0 ,%i\n", mipsReg->a0);
+    printf("$a1 ,%i\n", mipsReg->a1);
+    printf("$a2 ,%i\n", mipsReg->a2);
+    printf("$a3 ,%i\n", mipsReg->a3);
+
+    printf("$t0 ,%i\n", mipsReg->t0);
+    printf("$t1 ,%i\n", mipsReg->t1);
+    printf("$t2 ,%i\n", mipsReg->t2);
+    printf("$t3 ,%i\n", mipsReg->t3);
+    printf("$t4 ,%i\n", mipsReg->t4);
+    printf("$t5 ,%i\n", mipsReg->t5);
+    printf("$t6 ,%i\n", mipsReg->t6);
+    printf("$t7 ,%i\n", mipsReg->t7);
+    printf("$t8 ,%i\n", mipsReg->t8);
+    printf("$t9 ,%i\n", mipsReg->t9);
+
+    printf("$s0 ,%i\n", mipsReg->s0);
+    printf("$s1 ,%i\n", mipsReg->s1);
+    printf("$s2 ,%i\n", mipsReg->s2);
+    printf("$s3 ,%i\n", mipsReg->s3);
+    printf("$s4 ,%i\n", mipsReg->s4);
+    printf("$s5 ,%i\n", mipsReg->s5);
+    printf("$s6 ,%i\n", mipsReg->s6);
+    printf("$s7 ,%i\n", mipsReg->s7);
+
+    printf("$k0 ,%i\n", mipsReg->k0);
+    printf("$k1 ,%i\n", mipsReg->k1);
+
+    printf("$gp ,%i\n", mipsReg->gp);
+
+    printf("$sp ,%i\n", mipsReg->sp);
+	printf("$fp ,%i\n", mipsReg->fp);
+    printf("$ra ,%i\n", mipsReg->ra);
+}
+
+
+
+
 
 int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 {

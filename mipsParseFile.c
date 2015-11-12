@@ -143,17 +143,12 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                 {
                     if(numWords == 1)
                     {
-
-						printf("Parsing label. token: %s \n", token);
                         curInstruct->LABEL = (char*) malloc(sizeof(token));
+
                         charToUpper(token);
                         strcpy(curInstruct->LABEL, token);
 						curInstruct->instType = NONETYPE;
-						
-							printf("Parsing single label %s \n",  curInstruct->LABEL);
-                      		//curInstruct->LABEL = (char*) malloc(sizeof(token));
-                        	//charToUpper(token);
-                        	//strcpy(curInstruct->LABEL, token);
+						saveLabel(curInstruct->LABEL, (*instructMemSize)+1);
                     }
                     else if(curInstruct->instr == NONE)
                     {
@@ -162,12 +157,11 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                         {
                             curInstruct->LABEL = (char*) malloc(sizeof(token));
                             strcpy(curInstruct->LABEL, token);
-							printf("Parsed label: %s from token %s\n", curInstruct->LABEL, token);
+							saveLabel(curInstruct->LABEL, *instructMemSize);
                         }
                         else
                         {
                             curInstruct->instType = getInstructionType(curInstruct->instr);
-							printf("Parsed label: %s  instr: %s from token %s\n", curInstruct->LABEL, instructNames[curInstruct->instr], token);
                         }
                     }
                     else if(curInstruct->instType == RTYPE)
@@ -241,10 +235,15 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
 
                     token = strtok(NULL, " ");
                 }
-                copyInstructMem(memPtr, curInstruct);
-                memPtr++;
+				if(curInstruct->instType){
+                	copyInstructMem(memPtr, curInstruct);
+	                (*instructMemSize)++;
+					memPtr++;
+				}
+
+                
                 deleteMemInstruct(curInstruct);
-                (*instructMemSize)++;
+
             }
         }
     }

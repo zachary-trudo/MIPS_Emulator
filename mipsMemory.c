@@ -3,6 +3,7 @@
 int data_mem[DATA_MEM_SIZE];
 memInstruct instr_mem[INSTR_MEM_SIZE];
 
+int num_labels = 0;
 void initMemInstruct(memInstruct* inst)
 {
     //inst->rs = (char*) malloc(sizeof(char) * 4);
@@ -120,7 +121,7 @@ void copyInstructMem(memInstruct* const dest, memInstruct* const src)
 
 void initDataMemory(dataMemory* datMem)
 {
-    int initSize = 10;
+    int initSize = 100;
     
     datMem->data = (int*) malloc(sizeof(int) * initSize);
     datMem->size = initSize;
@@ -140,21 +141,21 @@ void deleteDataMemory(dataMemory* datMem)
 }
 
 
-void storeData(int* addr, int* size, int index, int data)
+void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    while(*size <= index)
+    int index = *imm + *rs;
+    while(*dataSize <= index)
     {
-        expandDataMemory(addr, size);
+        expandDataMemory(dataMem->data, dataSize);
     }
-    *(addr + index) = data;
+    *(dataMem ->data + index) = *rt;
 }
 
-int loadData(int* addr, int size, int index)
+void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    int retVal = 0;
-    if(index <= size)
-        retVal = *(addr + index);
-    return retVal;
+    int index = *imm + * rs;
+    if(index <= *dataSize)
+        *rt = *(dataMem->data + index);
 }
 
 int* getDataPointer(char* str, dataMemory* dataMem)
@@ -165,6 +166,45 @@ int* getDataPointer(char* str, dataMemory* dataMem)
 int* getSize(dataMemory* dataMem)
 {
    return &dataMem->size;
+}
+
+void initMipsLabel(mipsLabel * labelStruct, char * LABEL){
+	labelStruct->label = (char*) malloc(sizeof(LABEL));
+	strcpy(labelStruct->label, LABEL);
+	labelStruct->address = -1;
+}
+
+int getAddressFromLabel(char * LABEL){
+	int i;
+	int ret = -1;
+	charToUpper(LABEL);
+	for(i = 0; i < num_labels; i++){
+		if(strcmp(labels[i]->label,LABEL) == 0){
+			ret = labels[i]->address;
+			break;
+		}	
+	}
+	if(ret == -1){
+		printf("Undeclared label: %s\n", LABEL);
+		exit(0);
+	}
+	return ret;
+}
+
+int saveLabel(char * LABEL, int address){
+
+	if(num_labels < 1024 && address > 0 && address < 1024){
+
+		mipsLabel * newLabel = (mipsLabel *) malloc(sizeof(mipsLabel));
+		initMipsLabel(newLabel, LABEL);
+
+		newLabel->address = address;
+		labels[num_labels] = newLabel;
+		num_labels++;
+		return 1;
+	}
+	return 0;
+
 }
 
             

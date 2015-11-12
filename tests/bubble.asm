@@ -28,10 +28,10 @@ sw   $t2, 28($t7)
 sw   $t3, 32($t7)
 sw   $t4, 36($t7)
 sw   $t5, 40($t7)
-main: addi $t0, $0, 10      # number of elements -1 in the array
+main: addi $t0, $0, 10      # 24 number of elements -1 in the array
 	  add $t1, $t7, $0
 	  add $t2, $0, $0
-loop: beq $t0,$zero,done
+loop: beq $t0,$zero,done #27
 	  lw $t6,0($t1)         # $t6 = *(pa)
 	  lw $t5,4($t1)         # $t5 = *(pa+1)
 	  sltu $t3,$t6,$t5      # if ($t6 < $t5)
@@ -39,10 +39,10 @@ loop: beq $t0,$zero,done
 	  sw $t6,4($t1)         #
 	  sw $t5,0($t1)         # *pa <-> *(pa+1)
 	  addi $t2, $0,1        # set exchange flag
-next: addi $t1,$t1,4        # pa++
+next: addi $t1,$t1,4        # #35 pa++
 	  addi $t0,$t0,-1       # $t0 = $t0 -1
       j loop
-done: bne $t2,$zero,main    # if (exchange) goto main
+done: bne $t2,$zero,main    # 38 if (exchange) goto main
 
-end: 
+end: 			#40
 

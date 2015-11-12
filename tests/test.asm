@@ -8,7 +8,9 @@
 #############################################
 	
 # Setting the stack pointer #
-		jr $ra
+		addi $t1, $zero, 9
+		addi $t2, $zero, 11
+		add $t0, $t1, $t2
 	# branch to end
 #############################
 

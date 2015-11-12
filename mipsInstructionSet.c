@@ -78,16 +78,16 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
 }
 
 
-void MIPS_MEMORY(int* rt, int* rs, const int imm, const Instructions instruction, dataMemory* datMem)
+void MIPS_MEMORY(int* rt, int* rs, int* imm, const Instructions instruction, dataMemory* datMem)
 {
     int* dataSize = getSize(datMem);
     switch(instruction)
     {
         case SW:
-            MIPS_SW(imm, rs, dataSize, *rt);
+            MIPS_SW(rt, rs, imm, dataSize, datMem);
             break;
         case LW:
-            MIPS_LW(imm, rs, dataSize, rt);
+            MIPS_LW(rt, imm, rs, dataSize, datMem);
             break;
         default:
             printf("sOmEtHiNg went terribly wrong. Should be impossible to get here.");
@@ -104,7 +104,7 @@ void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
     }
     else if(curInstruct->instruction == BNE)
     {
-        MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+        MIPS_BNE(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
     }
 }
 
@@ -139,7 +139,7 @@ int MIPS_ADDIU(const int rs, const int rt)
 // Subtract value will be referenced in Branch
 int MIPS_SUB(const  int rs, const  int rt, int *overflow)
 {
-    int returnVal = rs + rt;
+    int returnVal = rs - rt;
     *overflow = returnVal < MINVALUE;
     return returnVal;
 }
@@ -176,7 +176,7 @@ int MIPS_OR(const int rs, const int rt)
 int MIPS_SLT(const int rs, const int rt)
 {
     int retVal = rs < rt;
-    printf("%i < %i = %i", rs, rt, retVal);
+  //  printf("%i < %i = %i", rs, rt, retVal);
     return retVal;
 }
 
@@ -184,7 +184,7 @@ int MIPS_SLT(const int rs, const int rt)
 int MIPS_SLTU(const int rs, const int rt)
 {
     int retVal = rs < rt;
-    printf("%i < %i = %i", rs, rt, retVal);
+    //printf("%i  %i = %i", rs, rt, retVal);
     return retVal;
 }
 
@@ -210,39 +210,32 @@ void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 void MIPS_J(int addr, int *nextAddress)
 {
-	printf("call to MIPS_J\n");
     *nextAddress = addr;
 }
 
 void MIPS_JR(int* rs, int *nextAddress)
 {
-	printf("call to MIPS_JR\n");
-	printf("value of rs: %d \n", *rs);
 	MIPS_J(*rs, nextAddress);
-	printf("Successful JR\n");
 }
 
 void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
-	mipsReg->ra = nextAddress += 2;
+	mipsReg->ra = *nextAddress + 1;
 	MIPS_J(addr,nextAddress);
 }
 // Load Operations
 
 // imm = index * 4, rs = addr
-void MIPS_LW(int imm, int* rs, int* size, int* rt)
+void MIPS_LW(int* rt,int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    *rt = loadData(rs, size, imm / 4);
+    loadData(rt, imm, rs, dataSize, dataMem);
 }
 
 // imm = index, rs = addr, size = size, rt = storeValue
 // Returns0 for failure, 1 for success.
-void MIPS_SW(int imm, int* rs, int* size, int rt)
+void MIPS_SW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    storeData(rs, size, imm / 4, rt);
+    storeData(rt, rs, imm, dataSize, dataMem);
 }
-
-
-
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

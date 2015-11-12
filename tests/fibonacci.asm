@@ -55,6 +55,7 @@ do_recurse:	addi	$t0,$t0,-1		# $t0 = n-1
 			addi	$sp,$sp,4		# increment stack pointer
 			lw		$t1,($sp)		#   and pop result of Fib(n-1) from stack into $t1
 			add		$t0,$t0,$t1		# $t0 = Fib(n-2) + Fib(n-1); have result
+			add		$t5,$0,$t0
 									# procedure epilogue: $t0 holds result
 epilogue:	addi	$sp,$sp,4		# increment stack pointer
 			lw		$fp,($sp)		#   and pop saved frame pointer into $fp
