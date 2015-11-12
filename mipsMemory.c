@@ -120,7 +120,7 @@ void copyInstructMem(memInstruct* const dest, memInstruct* const src)
 
 void initDataMemory(dataMemory* datMem)
 {
-    int initSize = 10;
+    int initSize = 100;
     
     datMem->data = (int*) malloc(sizeof(int) * initSize);
     datMem->size = initSize;
@@ -140,21 +140,21 @@ void deleteDataMemory(dataMemory* datMem)
 }
 
 
-void storeData(int* addr, int* size, int index, int data)
+void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    while(*size <= index)
+    int index = *imm + *rs;
+    while(*dataSize <= index)
     {
-        expandDataMemory(addr, size);
+        expandDataMemory(dataMem->data, dataSize);
     }
-    *(addr + index) = data;
+    *(dataMem ->data + index) = *rt;
 }
 
-int loadData(int* addr, int size, int index)
+void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    int retVal = 0;
-    if(index <= size)
-        retVal = *(addr + index);
-    return retVal;
+    int index = *imm + * rs;
+    if(index <= *dataSize)
+        *rt = *(dataMem->data + index);
 }
 
 int* getDataPointer(char* str, dataMemory* dataMem)

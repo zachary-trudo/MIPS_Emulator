@@ -78,16 +78,16 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
 }
 
 
-void MIPS_MEMORY(int* rt, int* rs, const int imm, const Instructions instruction, dataMemory* datMem)
+void MIPS_MEMORY(int* rt, int* rs, int* imm, const Instructions instruction, dataMemory* datMem)
 {
     int* dataSize = getSize(datMem);
     switch(instruction)
     {
         case SW:
-            MIPS_SW(imm, rs, dataSize, *rt);
+            MIPS_SW(rt, rs, imm, dataSize, datMem);
             break;
         case LW:
-            MIPS_LW(imm, rs, dataSize, rt);
+            MIPS_LW(rt, imm, rs, dataSize, datMem);
             break;
         default:
             printf("sOmEtHiNg went terribly wrong. Should be impossible to get here.");
@@ -104,7 +104,7 @@ void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
     }
     else if(curInstruct->instruction == BNE)
     {
-        MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+        MIPS_BNE(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
     }
 }
 
@@ -183,8 +183,8 @@ int MIPS_SLT(const int rs, const int rt)
 
 int MIPS_SLTU(const int rs, const int rt)
 {
-    int retVal = rs < rt;
-    printf("%i < %i = %i", rs, rt, retVal);
+    int retVal = rs > rt;
+    printf("%i > %i = %i", rs, rt, retVal);
     return retVal;
 }
 
@@ -229,20 +229,17 @@ void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
 // Load Operations
 
 // imm = index * 4, rs = addr
-void MIPS_LW(int imm, int* rs, int* size, int* rt)
+void MIPS_LW(int* rt,int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    *rt = loadData(rs, size, imm / 4);
+    loadData(rt, imm, rs, dataSize, dataMem);
 }
 
 // imm = index, rs = addr, size = size, rt = storeValue
 // Returns0 for failure, 1 for success.
-void MIPS_SW(int imm, int* rs, int* size, int rt)
+void MIPS_SW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
-    storeData(rs, size, imm / 4, rt);
+    storeData(rt, rs, imm, dataSize, dataMem);
 }
-
-
-
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

@@ -49,6 +49,9 @@ void initDataMemory(dataMemory* datMem);
 void expandDataMemory(int* addr, int* size);
 void deleteDataMemory(dataMemory* datMem);
 
+void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
+void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
+
 int* getDataPointer(char* str, dataMemory* datMem);
 int* getSize(dataMemory* datMem);
 #endif
