@@ -32,7 +32,6 @@ void initRegister(mipsRegister* mipsReg)
     mipsReg->s5   = 0;
     mipsReg->s6   = 0;
     mipsReg->s7   = 0;
-    mipsReg->s8   = 0;
 
 
     mipsReg->k0   = 0;
@@ -41,7 +40,7 @@ void initRegister(mipsRegister* mipsReg)
     mipsReg->gp   = 0;
 
     mipsReg->sp   = 0;
-
+	mipsReg->fp   = 0;
     mipsReg->ra   = 0;
 }
 
@@ -89,7 +88,6 @@ int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
         "$s5",      &mipsReg->s5,
         "$s6",      &mipsReg->s6,
         "$s7",      &mipsReg->s7,
-        "$s8",      &mipsReg->s8,
 
         "$k0",      &mipsReg->k0,
         "$k1",      &mipsReg->k1,
@@ -98,6 +96,7 @@ int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg)
 
         "$sp",      &mipsReg->sp,
         
+		"$fp", 		&mipsReg->fp,
         "$ra",      &mipsReg->ra
     };
 

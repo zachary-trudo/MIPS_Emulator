@@ -210,9 +210,22 @@ void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 void MIPS_J(int addr, int *nextAddress)
 {
+	printf("call to MIPS_J\n");
     *nextAddress = addr;
 }
 
+void MIPS_JR(int* rs, int *nextAddress)
+{
+	printf("call to MIPS_JR\n");
+	printf("value of rs: %d \n", *rs);
+	MIPS_J(*rs, nextAddress);
+	printf("Successful JR\n");
+}
+
+void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
+	mipsReg->ra = nextAddress += 2;
+	MIPS_J(addr,nextAddress);
+}
 // Load Operations
 
 // imm = index * 4, rs = addr

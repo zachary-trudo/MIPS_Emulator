@@ -131,6 +131,8 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                 replaceChar(line, '\n', ' ');
                 // Replace all ':' with ' '
                 replaceChar(line, ':', ' ');
+				// Replace all '\t' with ' '
+				replaceChar(line, '\t', ' ');
 
                 // Grab first token.
                 numWords = numberOfWords(line);
@@ -141,9 +143,17 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                 {
                     if(numWords == 1)
                     {
+
+						printf("Parsing label. token: %s \n", token);
                         curInstruct->LABEL = (char*) malloc(sizeof(token));
                         charToUpper(token);
                         strcpy(curInstruct->LABEL, token);
+						curInstruct->instType = NONETYPE;
+						
+							printf("Parsing single label %s \n",  curInstruct->LABEL);
+                      		//curInstruct->LABEL = (char*) malloc(sizeof(token));
+                        	//charToUpper(token);
+                        	//strcpy(curInstruct->LABEL, token);
                     }
                     else if(curInstruct->instr == NONE)
                     {
@@ -152,10 +162,12 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                         {
                             curInstruct->LABEL = (char*) malloc(sizeof(token));
                             strcpy(curInstruct->LABEL, token);
+							printf("Parsed label: %s from token %s\n", curInstruct->LABEL, token);
                         }
                         else
                         {
                             curInstruct->instType = getInstructionType(curInstruct->instr);
+							printf("Parsed label: %s  instr: %s from token %s\n", curInstruct->LABEL, instructNames[curInstruct->instr], token);
                         }
                     }
                     else if(curInstruct->instType == RTYPE)

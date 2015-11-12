@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     int instructMemSize = 0;
 
     parseFile(infp, instructMem, &instructMemSize);
-    writeFile(outfp, instructMem, instructMemSize);
+ //   writeFile(outfp, instructMem, instructMemSize);
 
     // Initialize all registers to 0.
     mipsRegister* mipsReg = (mipsRegister*) malloc(sizeof(mipsRegister));
@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
     memInstruct* currentInstruct;
     decodedInstruct* curDecodedInstruct;
 
-
+	int * ra, sp;
+	ra = getPointerToRegister("$ra", mipsReg);
+	sp = getPointerToRegister("$sp", mipsReg);
     while(TRUE)
     {
        // Fetch Instruction
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
        // Decode Instruction
        curDecodedInstruct = instructDecode(instructMem, instructMemSize, currentInstruct, mipsReg, dataReg);
        printf("\n%s", instructNames[currentInstruct->instr]);
-
+	   printf("\t $sp = %d, $ra = %d \n", sp, ra);
        if(curDecodedInstruct->instructType == RTYPE)
        {
             *curDecodedInstruct->rd = MIPS_ALU(*curDecodedInstruct->rs, *curDecodedInstruct->rt, &overflow, curDecodedInstruct->instruction);
@@ -81,10 +83,23 @@ int main(int argc, char *argv[])
        }
        if(curDecodedInstruct->instructType == JTYPE)
        {
-            MIPS_J(curDecodedInstruct->addr, &nextAddress);
+           // MIPS_J(curDecodedInstruct->addr, &nextAddress);
+			printf("\t decoded a JTYPE: %s \n", instructNames[curDecodedInstruct->instruction]);
+			switch(curDecodedInstruct->instruction){
+				case J:
+		            MIPS_J(curDecodedInstruct->addr, &nextAddress);
+				case JR:
+					printf("\tGot a JR instr \n");
+					MIPS_JR(curDecodedInstruct->rs,  &nextAddress);
+				case JAL:
+					MIPS_JAL(curDecodedInstruct->addr, &nextAddress);
+				//default:
+					//printf("\tbad jump instruction\n");
+			}
        }
        if(curDecodedInstruct->instructType == NONETYPE)
        {
+		   printf("\tinstruction is nonetype\n, hopefully this exits\n");
            if(currentAddress == instructMemSize - 1)
            {
                break;

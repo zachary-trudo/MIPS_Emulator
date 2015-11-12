@@ -49,7 +49,7 @@ struct registers
     int s5;
     int s6;
     int s7;
-    int s8;
+    //int s8;
 
     // Kernal Registers - Unused
     int k0;
@@ -60,7 +60,8 @@ struct registers
 
     // Stack poiunter
     int sp;
-
+	
+	int fp;
     // Return Address
     int ra;
 };
