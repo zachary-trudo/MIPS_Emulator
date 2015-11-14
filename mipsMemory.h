@@ -50,10 +50,11 @@ typedef struct dataMemory
 {
     int* data;
     int size;
+    int* used;
 }dataMemory;
 
 void initDataMemory(dataMemory* datMem);
-void expandDataMemory(int* addr, int* size);
+void expandDataMemory(dataMemory* oldDataMemory, int* size);
 void deleteDataMemory(dataMemory* datMem);
 
 void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);

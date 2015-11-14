@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     memInstruct* currentInstruct;
     decodedInstruct* curDecodedInstruct;
-    while(TRUE && currentAddress < instructMemSize &&  nextAddress > currentAddress)
+    while(currentAddress < instructMemSize)
     {
        currentInstruct = &instructMem[currentAddress];
        curDecodedInstruct = instructDecode(instructMem, instructMemSize, currentInstruct, mipsReg, dataReg);
@@ -93,26 +93,20 @@ int main(int argc, char *argv[])
            {
                break;
            }
-
-
        }
       
-       int returnTime = time(0) + 2;
        currentAddress = nextAddress;
-
-	   if(nextAddress != instructMemSize){
-	       nextAddress++;
-	   }
+       nextAddress++;
     }
+    
+    printf("\n");
+    for(i = 0; i < *getSize(dataReg); i++)
+    {
+        if(dataReg->used[i])
+            printf("%i : %i\n", i, dataReg->data[i]);
+    }
+    printf("\n");
 
-		/*
-       printf("\n");
-        for(i = 0; i < *getSize(dataReg); i++)
-        {
-            if(dataReg->data[i] != 0)
-                printf("%i : %i\n", i, dataReg->data[i]);
-        }
-        printf("\n");*/
     for(i = instructMemSize-1; i >= 0; i--)
         deleteMemInstructOnStack(&instructMem[i]);
     close(infp);

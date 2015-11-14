@@ -22,5 +22,9 @@ typedef struct decoded
 
 decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int instructLength, const memInstruct* const instruct, mipsRegister* mipsReg, dataMemory* dataReg);
 
+decodedInstruct* initMipsInstruct();
+
+int decodeAddr(const char* const addr, const memInstruct* const allInstructs, const int instructLength);
+
 #endif
 

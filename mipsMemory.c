@@ -6,22 +6,22 @@ memInstruct instr_mem[INSTR_MEM_SIZE];
 int num_labels = 0;
 void initMemInstruct(memInstruct* inst)
 {
-    //inst->rs = (char*) malloc(sizeof(char) * 4);
+    inst->rs = (char*) malloc(sizeof(char) * 4);
     inst->rs = '\0';
 
-    //inst->rd = (char*) malloc(sizeof(char) * 4);
+    inst->rd = (char*) malloc(sizeof(char) * 4);
     inst->rd = '\0';
 
-    //inst->rt = (char*) malloc(sizeof(char) * 4);
+    inst->rt = (char*) malloc(sizeof(char) * 4);
     inst->rt = '\0';
 
-    //inst->imm = (char*) malloc(sizeof(char) * 4);
+    inst->imm = (char*) malloc(sizeof(char) * 4);
     inst->imm = '\0';
 
-    //inst->addr = (char*) malloc(sizeof(char) * 4);
+    inst->addr = (char*) malloc(sizeof(char) * 4);
     inst->addr = '\0';
 
-    //inst->LABEL = (char*) malloc(sizeof(char) * 6);
+    inst->LABEL = (char*) malloc(sizeof(char) * 6);
     inst->LABEL = '\0';
 
     inst->instType = NONE;
@@ -122,16 +122,34 @@ void copyInstructMem(memInstruct* const dest, memInstruct* const src)
 void initDataMemory(dataMemory* datMem)
 {
     int initSize = 100;
+    int i;
     
     datMem->data = (int*) malloc(sizeof(int) * initSize);
     datMem->size = initSize;
+    datMem->used = (int*) malloc(sizeof(int) * initSize);
+    
+    for(i = 0; i < initSize; i++)
+    {
+        datMem->data[i] = 0;
+        datMem->used[i] = 0;
+    }
 }
 
-void expandDataMemory(int* addr, int* size)
+void expandDataMemory(dataMemory* oldDataMemory, int* size)
 {
+    int oldSize = *size;
+    int i;
     *size = *size * 2;
-    int* newAddr = realloc(addr, *size);
-    addr = newAddr;
+    dataMemory* newDataMem = (dataMemory*) malloc((sizeof(dataMemory) * *size));
+    initDataMemory(newDataMem);
+
+    for(i = 0; i < oldSize;i++)
+    {
+        newDataMem->data[i] = oldDataMemory->data[i];
+        newDataMem->used[i] = oldDataMemory->used[i];
+    }
+    deleteDataMemory(oldDataMemory);
+    oldDataMemory = newDataMem;
 }
 
 void deleteDataMemory(dataMemory* datMem)
@@ -140,15 +158,20 @@ void deleteDataMemory(dataMemory* datMem)
     free(datMem);
 }
 
+void setData(dataMemory* datMem, int index, int value)
+{
+    datMem->data[index] = value;
+    datMem->used[index] = 1;
+}
 
 void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
 {
     int index = *imm + *rs;
     while(*dataSize <= index)
     {
-        expandDataMemory(dataMem->data, dataSize);
+        expandDataMemory(dataMem, dataSize);
     }
-    *(dataMem ->data + index) = *rt;
+    setData(dataMem, index, *rt);
 }
 
 void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
