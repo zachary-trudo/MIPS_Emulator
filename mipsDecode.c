@@ -57,13 +57,9 @@ decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int
 
     if(instruct->addr)
     {
-		//printf("decoding label address %s\n", instruct->addr);
-        mipsInstruct->addr = decodeAddr(instruct->addr, allInstructs, instructLength);
-		//printf("successful decode address\n");
+		mipsInstruct->addr = getAddressFromLabel(instruct->addr);
     }
-	printf("Decoding instruction: %s\n", instructNames[instruct->instr]);
 	if(instruct->instr == JR){
-			printf("Decoding JR - rs = %s\n", instruct->rs);
 	}
     if(instruct->rs)
     {
@@ -82,7 +78,6 @@ decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int
         mipsInstruct->imm = atoi(instruct->imm);
     }
 
-	//printf("successful decode\n");
     return mipsInstruct;
 }
 

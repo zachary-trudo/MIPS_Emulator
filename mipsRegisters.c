@@ -89,6 +89,7 @@ void printRegister(mipsRegister* mipsReg)
     printf("$gp ,%i\n", mipsReg->gp);
 
     printf("$sp ,%i\n", mipsReg->sp);
+	printf("$fp ,%i\n", mipsReg->fp);
     printf("$ra ,%i\n", mipsReg->ra);
 }
 

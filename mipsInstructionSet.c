@@ -139,7 +139,7 @@ int MIPS_ADDIU(const int rs, const int rt)
 // Subtract value will be referenced in Branch
 int MIPS_SUB(const  int rs, const  int rt, int *overflow)
 {
-    int returnVal = rs + rt;
+    int returnVal = rs - rt;
     *overflow = returnVal < MINVALUE;
     return returnVal;
 }
@@ -176,15 +176,15 @@ int MIPS_OR(const int rs, const int rt)
 int MIPS_SLT(const int rs, const int rt)
 {
     int retVal = rs < rt;
-    printf("%i < %i = %i", rs, rt, retVal);
+  //  printf("%i < %i = %i", rs, rt, retVal);
     return retVal;
 }
 
 
 int MIPS_SLTU(const int rs, const int rt)
 {
-    int retVal = rs > rt;
-    printf("%i > %i = %i", rs, rt, retVal);
+    int retVal = rs < rt;
+    //printf("%i  %i = %i", rs, rt, retVal);
     return retVal;
 }
 
@@ -210,20 +210,16 @@ void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 void MIPS_J(int addr, int *nextAddress)
 {
-	printf("call to MIPS_J\n");
     *nextAddress = addr;
 }
 
 void MIPS_JR(int* rs, int *nextAddress)
 {
-	printf("call to MIPS_JR\n");
-	printf("value of rs: %d \n", *rs);
 	MIPS_J(*rs, nextAddress);
-	printf("Successful JR\n");
 }
 
 void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
-	mipsReg->ra = nextAddress += 2;
+	mipsReg->ra = *nextAddress + 1;
 	MIPS_J(addr,nextAddress);
 }
 // Load Operations

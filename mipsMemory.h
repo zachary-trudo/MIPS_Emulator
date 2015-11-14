@@ -10,12 +10,19 @@
 
 #define DATA_MEM_SIZE 1028
 #define INSTR_MEM_SIZE 1028
-
+#define MAX_LABEL_SIZE
 typedef struct mipsLabel
 {
 	char * label;
 	int address;
 }mipsLabel;
+
+mipsLabel * labels[1024];
+
+int getAddressFromLabel(char * LABEL);
+int saveLabel(char * LABEL, int address);
+
+void initMipsLabel(mipsLabel * labelStruct,  char* LABEL);
 
 typedef struct instruction
 {

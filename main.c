@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     int instructMemSize = 0;
 
     parseFile(infp, instructMem, &instructMemSize);
- //   writeFile(outfp, instructMem, instructMemSize);
+   // writeFile(outfp, instructMem, instructMemSize);
 
     // Initialize all registers to 0.
     mipsRegister* mipsReg = (mipsRegister*) malloc(sizeof(mipsRegister));
@@ -49,19 +49,10 @@ int main(int argc, char *argv[])
 
     memInstruct* currentInstruct;
     decodedInstruct* curDecodedInstruct;
-
-	int * ra, sp;
-	ra = getPointerToRegister("$ra", mipsReg);
-	sp = getPointerToRegister("$sp", mipsReg);
-    while(TRUE)
+    while(TRUE && currentAddress < instructMemSize &&  nextAddress > currentAddress)
     {
-       // Fetch Instruction
        currentInstruct = &instructMem[currentAddress];
-       
-       // Decode Instruction
        curDecodedInstruct = instructDecode(instructMem, instructMemSize, currentInstruct, mipsReg, dataReg);
-       printf("\n%s", instructNames[currentInstruct->instr]);
-	   printf("\t $sp = %d, $ra = %d \n", sp, ra);
        if(curDecodedInstruct->instructType == RTYPE)
        {
             *curDecodedInstruct->rd = MIPS_ALU(*curDecodedInstruct->rs, *curDecodedInstruct->rt, &overflow, curDecodedInstruct->instruction);
@@ -83,23 +74,21 @@ int main(int argc, char *argv[])
        }
        if(curDecodedInstruct->instructType == JTYPE)
        {
-           // MIPS_J(curDecodedInstruct->addr, &nextAddress);
-			printf("\t decoded a JTYPE: %s \n", instructNames[curDecodedInstruct->instruction]);
-			switch(curDecodedInstruct->instruction){
-				case J:
+			if(curDecodedInstruct->instruction == J){
+					if(curDecodedInstruct->addr > instructMemSize -1){
+						printf("mem out of bounds\n");
+						exit(0);
+					}
 		            MIPS_J(curDecodedInstruct->addr, &nextAddress);
-				case JR:
-					printf("\tGot a JR instr \n");
+			}else if(curDecodedInstruct->instruction == JR){
+					
 					MIPS_JR(curDecodedInstruct->rs,  &nextAddress);
-				case JAL:
+			}else{
 					MIPS_JAL(curDecodedInstruct->addr, &nextAddress);
-				//default:
-					//printf("\tbad jump instruction\n");
 			}
        }
        if(curDecodedInstruct->instructType == NONETYPE)
        {
-		   printf("\tinstruction is nonetype\n, hopefully this exits\n");
            if(currentAddress == instructMemSize - 1)
            {
                break;
@@ -109,24 +98,21 @@ int main(int argc, char *argv[])
        }
       
        int returnTime = time(0) + 2;
-
-       // Execute
-       //executeInstruct(currentInstruct, &mipsReg, &currentAddress);
-       //
        currentAddress = nextAddress;
-       nextAddress++;
 
-        printf("\n");
+	   if(nextAddress != instructMemSize){
+	       nextAddress++;
+	   }
+    }
+
+		/*
+       printf("\n");
         for(i = 0; i < *getSize(dataReg); i++)
         {
             if(dataReg->data[i] != 0)
                 printf("%i : %i\n", i, dataReg->data[i]);
         }
-        printf("\n");
-        printRegister(mipsReg);
-
-    }
- 
+        printf("\n");*/
     for(i = instructMemSize-1; i >= 0; i--)
         deleteMemInstructOnStack(&instructMem[i]);
     close(infp);
