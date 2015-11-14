@@ -9,14 +9,15 @@
 
 typedef struct decoded
 {
+
     Instructions instruction;
     InstructionType instructType;
     int *rd;
     int *rt;
     int *rs;
     int imm;
-    
     int addr;
+
 } decodedInstruct;
 
 

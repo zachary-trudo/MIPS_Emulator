@@ -47,6 +47,11 @@ int main(int argc, char *argv[])
     int nextAddress = 1;
     int overflow = 0;
 
+	int * ra = getPointerToRegister("$ra", mipsReg);
+	int * sp = getPointerToRegister("$sp", mipsReg);
+	int * t3 = getPointerToRegister("$t3", mipsReg);
+	int * v0 = getPointerToRegister("$v0", mipsReg);
+
     memInstruct* currentInstruct;
     decodedInstruct* curDecodedInstruct;
     while(currentAddress < instructMemSize)
@@ -84,7 +89,7 @@ int main(int argc, char *argv[])
 					
 					MIPS_JR(curDecodedInstruct->rs,  &nextAddress);
 			}else{
-					MIPS_JAL(curDecodedInstruct->addr, &nextAddress);
+					MIPS_JAL(curDecodedInstruct->addr, &nextAddress, mipsReg);
 			}
        }
        if(curDecodedInstruct->instructType == NONETYPE)
@@ -95,21 +100,23 @@ int main(int argc, char *argv[])
            }
        }
       
-       currentAddress = nextAddress;
+		currentAddress = nextAddress;
        nextAddress++;
-    }
-    
-    printf("\n");
-    for(i = 0; i < *getSize(dataReg); i++)
-    {
-        if(dataReg->used[i])
-            printf("%i : %i\n", i, dataReg->data[i]);
     }
     printf("\n");
 
+	printf("v0: %d\n", *v0);
+		
+   printf("\n");
+    for(i = 0; i < *getSize(dataReg); i++)
+    {
+        if(dataReg->used[i] == 1)
+            printf("%i : %i\n", i, dataReg->data[i]);
+    }
+    printf("\n");
     for(i = instructMemSize-1; i >= 0; i--)
         deleteMemInstructOnStack(&instructMem[i]);
-    close(infp);
+   	close(infp);
     close(outfp);
     return 0;
 }
