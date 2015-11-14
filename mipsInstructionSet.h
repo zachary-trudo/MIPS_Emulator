@@ -31,6 +31,7 @@ int MIPS_SUBI(const int rs, const int immediate, int *overflow);
 int MIPS_SUBU(const int rs, const int rt);	
 int MIPS_SUBIU(const int rs, int immediate);
 
+int MIPS_MULT(const int rs, const int rt, int * overflow);
 // Logical Operations
 int MIPS_AND(const int rs, const int rt);
 int MIPS_OR(const int rs, const int rt);
@@ -46,6 +47,8 @@ void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction);
 
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 void MIPS_J(const int addr, int *nextInstruction);
+void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg);
+void MIPS_JR(int * rs, int *nextAddress);
 
 // Load Operations
 void MIPS_SW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);

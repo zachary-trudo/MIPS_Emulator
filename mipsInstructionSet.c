@@ -24,7 +24,10 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
         case SUBU:
             returnVal = MIPS_SUBU(rs, rt);
             break;
-
+		case MULT:
+			printf("Calling mips_MULT\n");
+			returnVal = MIPS_MULT(rs, rt, overflow);
+			break;
         // Logical Operations:
         case AND:
             returnVal = MIPS_AND(rs, rt);
@@ -161,6 +164,15 @@ int MIPS_SUBIU(const int rs, int immediate)
     return MIPS_SUBU(rs, immediate);
 }
 
+int MIPS_MULT(const int rs, const int rt, int * overflow)
+{
+	printf("Call to MIP_MTUL\n");
+	int returnVal = rs * rt;
+	*overflow = returnVal > MAXVALUE;
+	printf("Calculated MIPS_MULT\n");
+	return returnVal;
+}
+
 // Logical Operations
 int MIPS_AND(const int rs, const int rt)
 {
@@ -219,9 +231,11 @@ void MIPS_JR(int* rs, int *nextAddress)
 }
 
 void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
-	mipsReg->ra = *nextAddress + 1;
+	printf("Call to JAL - jump addr = %d, next_addr = %d \n", addr, *nextAddress);
+	mipsReg->ra = *nextAddress;
 	MIPS_J(addr,nextAddress);
 }
+
 // Load Operations
 
 // imm = index * 4, rs = addr
