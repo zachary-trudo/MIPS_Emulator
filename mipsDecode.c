@@ -13,6 +13,10 @@ decodedInstruct* initMipsInstruct()
     return mipsInstruct;
 }
 
+void deleteMipsInstruct(decodedInstruct* mipsInstruct)
+{
+    free(mipsInstruct);
+}
 
 int decodeAddr(const char* const addr, const memInstruct* const allInstructs, const int instructLength)
 {
@@ -43,7 +47,7 @@ int decodeAddr(const char* const addr, const memInstruct* const allInstructs, co
 
 
 
-decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int instructLength, const memInstruct* const instruct, mipsRegister* mipsReg, dataMemory* dataReg)
+decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int instructLength, const memInstruct* instruct, mipsRegister* mipsReg, dataMemory* dataReg)
 {
     decodedInstruct* mipsInstruct = initMipsInstruct();
 
@@ -57,10 +61,8 @@ decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int
 
     if(instruct->addr)
     {
-		mipsInstruct->addr = getAddressFromLabel(instruct->addr);
+		mipsInstruct->addr = getAddressFromLabel(instruct->addr, allInstructs, instructLength);
     }
-	if(instruct->instr == JR){
-	}
     if(instruct->rs)
     {
         mipsInstruct->rs = getPointerToRegister(instruct->rs, mipsReg);

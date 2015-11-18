@@ -54,6 +54,11 @@ void splitLoadToken(char* token, char* imm, char* rs)
     char* immPtr = imm;
     char* rsPtr = rs;
 
+    if (*token == '(')
+    {
+        *immPtr = '0';
+        *immPtr++;
+    }
     for(token; *token != '('; token++)
     {
         *immPtr = *token;
@@ -143,21 +148,19 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                 {
                     if(numWords == 1)
                     {
-                        curInstruct->LABEL = (char*) malloc(sizeof(token));
+                        curInstruct->LABEL = (char*) malloc((strlen(token) + 1) * sizeof(char));
 
                         charToUpper(token);
                         strcpy(curInstruct->LABEL, token);
 						curInstruct->instType = NONETYPE;
-						saveLabel(curInstruct->LABEL, (*instructMemSize)+1);
                     }
                     else if(curInstruct->instr == NONE)
                     {
                         curInstruct->instr = getInstructFromChar(token);
                         if(curInstruct->instr == NONE)
                         {
-                            curInstruct->LABEL = (char*) malloc(sizeof(token));
+                            curInstruct->LABEL = (char*) malloc((strlen(token) + 1) * sizeof(char));
                             strcpy(curInstruct->LABEL, token);
-							saveLabel(curInstruct->LABEL, *instructMemSize);
                         }
                         else
                         {
@@ -168,17 +171,17 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                     {
                        if(!curInstruct->rd)
                        {
-                           curInstruct->rd = (char*) malloc(sizeof(token));
+                           curInstruct->rd = (char*) malloc((strlen(token) + 1) * sizeof(char));
                            strcpy(curInstruct->rd, token);
                        }
                        else if(!curInstruct->rs)
                        {
-                           curInstruct->rs = (char*) malloc(sizeof(token));
+                           curInstruct->rs = (char*) malloc((strlen(token) + 1) * sizeof(char));
                            strcpy(curInstruct->rs, token);
                        }
                        else
                        {
-                           curInstruct->rt = (char*) malloc(sizeof(token));
+                           curInstruct->rt = (char*) malloc((strlen(token) + 1) * sizeof(char));
                            strcpy(curInstruct->rt, token);
                            break;
                        }
@@ -187,7 +190,7 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                     {
                         if(!curInstruct->rt)
                         {
-                            curInstruct->rt = (char*) malloc(sizeof(token));
+                            curInstruct->rt = (char*) malloc((strlen(token) + 1) * sizeof(char));
                             strcpy(curInstruct->rt, token);
                         }
                         else
@@ -200,18 +203,18 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                             }
                             else if(!curInstruct->rs)
                             {
-                                curInstruct->rs = (char*) malloc(sizeof(token));
+                                curInstruct->rs = (char*) malloc((strlen(token) + 1) * sizeof(char));
                                 strcpy(curInstruct->rs, token);
                             }
                             else if(curInstruct->instr == BEQ || curInstruct->instr == BNE)
                             {
-                                curInstruct->addr = (char*) malloc(sizeof(token));
+                                curInstruct->addr = (char*) malloc((strlen(token) + 1) * sizeof(char));
                                 strcpy(curInstruct->addr, token);
                                 break;
                             }
                             else
                             {
-                                curInstruct->imm = (char*) malloc(sizeof(token));
+                                curInstruct->imm = (char*) malloc((strlen(token) + 1) * sizeof(char));
                                 strcpy(curInstruct->imm, token);
                                 break;
                             }
@@ -221,13 +224,13 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
                     {
                         if(curInstruct->instr == J || curInstruct->instr == JAL)
                         {
-                            curInstruct->addr = (char*) malloc(sizeof(token));
+                            curInstruct->addr = (char*) malloc((strlen(token) + 1) * sizeof(char));
                             strcpy(curInstruct->addr, token);
                             break;
                         }
                         else
                         {
-                            curInstruct->rs = (char*) malloc(sizeof(token));
+                            curInstruct->rs = (char*) malloc((strlen(token) + 1) * sizeof(char));
                             strcpy(curInstruct->rs, token);
                             break;
                         }
@@ -235,13 +238,9 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
 
                     token = strtok(NULL, " ");
                 }
-				if(curInstruct->instType){
-                	copyInstructMem(memPtr, curInstruct);
-	                (*instructMemSize)++;
-					memPtr++;
-				}
-
-                
+                copyInstructMem(memPtr, curInstruct);
+                (*instructMemSize)++;
+                memPtr++;
                 deleteMemInstruct(curInstruct);
 
             }

@@ -28,8 +28,6 @@ void initMemInstruct(memInstruct* inst)
     inst->instr    = NONE;
 }
 
-
-
 void deleteMemInstruct(memInstruct* inst)
 {
     if(inst->rs)
@@ -78,37 +76,37 @@ void copyInstructMem(memInstruct* const dest, memInstruct* const src)
 {
     if(src->LABEL)
     {
-        dest->LABEL = (char*) malloc(sizeof(src->LABEL));
+        dest->LABEL = (char*) malloc((strlen(src->LABEL) + 1) * sizeof(char));
         strcpy(dest->LABEL, src->LABEL);
     }
 
     if(src->rt)
     {
-        dest->rt = (char*) malloc(sizeof(src->rt));
+        dest->rt = (char*) malloc((strlen(src->rt) + 1) * sizeof(char));
         strcpy(dest->rt, src->rt);
     }
 
     if(src->rs)
     {
-        dest->rs = (char*) malloc(sizeof(src->rs));
+        dest->rs = (char*) malloc((strlen(src->rs) + 1) * sizeof(char));
         strcpy(dest->rs, src->rs);
     }
 
     if(src->rd)
     {
-        dest->rd = (char*) malloc(sizeof(src->rd));
+        dest->rd = (char*) malloc((strlen(src->rd) + 1) * sizeof(char));
         strcpy(dest->rd, src->rd);
     }
 
     if(src->imm)
     {
-        dest->imm = (char*) malloc(sizeof(src->imm));
+        dest->imm = (char*) malloc((strlen(src->imm) + 1) * sizeof(char));
         strcpy(dest->imm, src->imm);
     }
 
     if(src->addr)
     {
-        dest->addr = (char*) malloc(sizeof(src->addr));
+        dest->addr = (char*) malloc((strlen(src->addr) + 1) * sizeof(char));
         strcpy(dest->addr, src->addr);
     }
 
@@ -119,9 +117,8 @@ void copyInstructMem(memInstruct* const dest, memInstruct* const src)
     }
 }
 
-void initDataMemory(dataMemory* datMem)
+void initDataMemory(dataMemory* datMem, int initSize)
 {
-    int initSize = 100;
     int i;
     
     datMem->data = (int*) malloc(sizeof(int) * initSize);
@@ -138,17 +135,18 @@ void initDataMemory(dataMemory* datMem)
 void expandDataMemory(dataMemory* oldDataMemory, int* size)
 {
     int oldSize = *size;
+    int newSize = *size * 2;
+    *size = newSize;
     int i;
-    *size = *size * 2;
-    dataMemory* newDataMem = (dataMemory*) malloc((sizeof(dataMemory) * *size));
-    initDataMemory(newDataMem);
+    dataMemory* newDataMem = (dataMemory*) malloc((sizeof(dataMemory) * newSize));
+    initDataMemory(newDataMem, newSize);
 
     for(i = 0; i < oldSize;i++)
     {
         newDataMem->data[i] = oldDataMemory->data[i];
         newDataMem->used[i] = oldDataMemory->used[i];
     }
-    deleteDataMemory(oldDataMemory);
+
     oldDataMemory = newDataMem;
 }
 
@@ -191,21 +189,21 @@ int* getSize(dataMemory* dataMem)
    return &dataMem->size;
 }
 
-void initMipsLabel(mipsLabel * labelStruct, char * LABEL){
-	labelStruct->label = (char*) malloc(sizeof(LABEL));
-	strcpy(labelStruct->label, LABEL);
-	labelStruct->address = -1;
-}
-
-int getAddressFromLabel(char * LABEL){
+int getAddressFromLabel(char * LABEL, const memInstruct* instructs, int numInstructs)
+{
 	int i;
 	int ret = -1;
 	charToUpper(LABEL);
-	for(i = 0; i < num_labels; i++){
-		if(strcmp(labels[i]->label,LABEL) == 0){
-			ret = labels[i]->address;
-			break;
-		}	
+	for(i = 0; i < numInstructs; i++)
+    {
+        if(instructs[i].LABEL)
+        {
+            if(strcmp(instructs[i].LABEL, LABEL) == 0)
+            {
+                ret = i;
+                break;
+            }
+        }
 	}
 	if(ret == -1){
 		printf("Undeclared label: %s\n", LABEL);
@@ -213,23 +211,3 @@ int getAddressFromLabel(char * LABEL){
 	}
 	return ret;
 }
-
-int saveLabel(char * LABEL, int address){
-
-	if(num_labels < 1024 && address > 0 && address < 1024){
-
-		mipsLabel * newLabel = (mipsLabel *) malloc(sizeof(mipsLabel));
-		initMipsLabel(newLabel, LABEL);
-
-		newLabel->address = address;
-		labels[num_labels] = newLabel;
-		num_labels++;
-		return 1;
-	}
-	return 0;
-
-}
-
-            
-            
-            

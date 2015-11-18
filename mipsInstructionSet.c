@@ -225,15 +225,15 @@ void MIPS_J(int addr, int *nextAddress)
     *nextAddress = addr;
 }
 
-void MIPS_JR(int* rs, int *nextAddress)
+void MIPS_JR(int rs, int *nextAddress)
 {
-	MIPS_J(*rs, nextAddress);
+	MIPS_J(rs, nextAddress);
 }
 
 void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
 	printf("Call to JAL - jump addr = %d, next_addr = %d \n", addr, *nextAddress);
 	mipsReg->ra = *nextAddress;
-	MIPS_J(addr,nextAddress);
+	MIPS_J(addr, nextAddress);
 }
 
 // Load Operations

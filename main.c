@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "commonFuncts.h"
 #include "mipsRegisters.h"
 #include "mipsInstructionSet.h"
 #include "mipsMemory.h"
 #include "mipsDecode.h"
 
-typedef enum {FALSE, TRUE} bool;
-
+#define DATAMEMSIZE 100
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     int instructMemSize = 0;
 
     parseFile(infp, instructMem, &instructMemSize);
-   // writeFile(outfp, instructMem, instructMemSize);
+    writeFile(outfp, instructMem, instructMemSize);
 
     // Initialize all registers to 0.
     mipsRegister* mipsReg = (mipsRegister*) malloc(sizeof(mipsRegister));
@@ -40,20 +40,16 @@ int main(int argc, char *argv[])
 
     // Initialize all data.
     dataMemory* dataReg = (dataMemory*) malloc(sizeof(dataMemory));
-    initDataMemory(dataReg);
+    initDataMemory(dataReg, DATAMEMSIZE);
 
     // Initialize first instruction to 0
     int currentAddress  = 0;
     int nextAddress = 1;
     int overflow = 0;
 
-	int * ra = getPointerToRegister("$ra", mipsReg);
-	int * sp = getPointerToRegister("$sp", mipsReg);
-	int * t3 = getPointerToRegister("$t3", mipsReg);
-	int * v0 = getPointerToRegister("$v0", mipsReg);
+    instructStack   InstructionStack;
+    initStack(&InstructionStack);
 
-    memInstruct* currentInstruct;
-    decodedInstruct* curDecodedInstruct;
     while(currentAddress < instructMemSize)
     {
        currentInstruct = &instructMem[currentAddress];
@@ -79,16 +75,22 @@ int main(int argc, char *argv[])
        }
        if(curDecodedInstruct->instructType == JTYPE)
        {
-			if(curDecodedInstruct->instruction == J){
-					if(curDecodedInstruct->addr > instructMemSize -1){
+			if(curDecodedInstruct->instruction == J)
+            {
+					if(curDecodedInstruct->addr > instructMemSize -1)
+                    {
 						printf("mem out of bounds\n");
 						exit(0);
 					}
 		            MIPS_J(curDecodedInstruct->addr, &nextAddress);
-			}else if(curDecodedInstruct->instruction == JR){
+			}
+            else if(curDecodedInstruct->instruction == JR)
+            {
 					
-					MIPS_JR(curDecodedInstruct->rs,  &nextAddress);
-			}else{
+					MIPS_JR(mipsReg->ra,  &nextAddress);
+			}
+            else if(curDecodedInstruct->instruction == JAL)
+            {
 					MIPS_JAL(curDecodedInstruct->addr, &nextAddress, mipsReg);
 			}
        }
