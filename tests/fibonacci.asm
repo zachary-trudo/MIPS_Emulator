@@ -8,7 +8,7 @@
 	   addi $sp, $0, 256
 #############################
 
-main:	addi	$s0, $0,8		# Fib(4)
+main:	addi	$s0, $0,4 		# Fib(4)
 		sw		$s0,($sp)		# push argument for Fib on stack
 		addi	$sp,$sp,-4		#   and decrement stack pointer
 		jal		Fib				# jump to subroutine

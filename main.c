@@ -47,8 +47,11 @@ int main(int argc, char *argv[])
     int nextAddress = 1;
     int overflow = 0;
 
-    instructStack   InstructionStack;
-    initStack(&InstructionStack);
+    //instructStack   InstructionStack;
+    //initStack(&InstructionStack);
+
+    memInstruct* currentInstruct;
+    decodedInstruct* curDecodedInstruct;
 
     while(currentAddress < instructMemSize)
     {
@@ -107,7 +110,7 @@ int main(int argc, char *argv[])
     }
     printf("\n");
 
-	printf("v0: %d\n", *v0);
+	printf("v0: %d\n", mipsReg->v0);
 		
    printf("\n");
     for(i = 0; i < *getSize(dataReg); i++)
