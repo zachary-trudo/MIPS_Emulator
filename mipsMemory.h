@@ -43,8 +43,8 @@ void initDataMemory(dataMemory* datMem, int initSize);
 void expandDataMemory(dataMemory* oldDataMemory, int* size);
 void deleteDataMemory(dataMemory* datMem);
 
-void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
-void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
+void storeData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
+void loadData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
 
 int* getDataPointer(char* str, dataMemory* datMem);
 int* getSize(dataMemory* datMem);

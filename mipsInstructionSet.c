@@ -80,20 +80,25 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
     return returnVal;
 }
 
+int MIPS_ALU_MEMORY(const int rs, const int imm, int *overflow)
+{
+    return MIPS_ALU_IMM(rs, imm, overflow, ADDI);
+}
 
-void MIPS_MEMORY(int* rt, int* rs, int* imm, const Instructions instruction, dataMemory* datMem)
+
+void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataMemory* datMem)
 {
     int* dataSize = getSize(datMem);
     switch(instruction)
     {
         case SW:
-            MIPS_SW(rt, rs, imm, dataSize, datMem);
+            MIPS_SW(rt, ALU_RESULT, dataSize, datMem);
             break;
         case LW:
-            MIPS_LW(rt, imm, rs, dataSize, datMem);
+            MIPS_LW(rt, ALU_RESULT, dataSize, datMem);
             break;
         default:
-            printf("sOmEtHiNg went terribly wrong. Should be impossible to get here.");
+            printf("Something went terribly wrong. Should be impossible to get here.");
             exit(1);
             break;
     }
@@ -239,16 +244,15 @@ void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
 // Load Operations
 
 // imm = index * 4, rs = addr
-void MIPS_LW(int* rt,int* rs, int* imm, int* dataSize, dataMemory* dataMem)
+void MIPS_LW(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
-    loadData(rt, imm, rs, dataSize, dataMem);
+    loadData(MEM_ALU_RESULT, ALU_RESULT, dataSize, dataMem);
 }
 
 // imm = index, rs = addr, size = size, rt = storeValue
-// Returns0 for failure, 1 for success.
-void MIPS_SW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
+void MIPS_SW(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
-    storeData(rt, rs, imm, dataSize, dataMem);
+    storeData(rt, ALU_RESULT, dataSize, dataMem);
 }
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015

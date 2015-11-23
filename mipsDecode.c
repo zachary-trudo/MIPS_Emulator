@@ -1,16 +1,31 @@
 #include "mipsDecode.h"
 
-decodedInstruct* initMipsInstruct()
+void initMipsInstruct(decodedInstruct* mipsInstruct)
 {
-    decodedInstruct* mipsInstruct = (decodedInstruct*) malloc(sizeof(decodedInstruct));
     mipsInstruct->instruction = NONE;
     mipsInstruct->instructType = NONETYPE;
-    mipsInstruct->rd = '\0';
-    mipsInstruct->rt = '\0';
-    mipsInstruct->rs = '\0';
+
+    mipsInstruct->rd = (int*) malloc(sizeof(int) * 4);
+    *mipsInstruct->rd = 0;
+    mipsInstruct->rt = (int*) malloc(sizeof(int) * 4);
+    *mipsInstruct->rt = 0;
+    mipsInstruct->rs = (int*) malloc(sizeof(int) * 4);
+    *mipsInstruct->rs = 0;
+
     mipsInstruct->imm = 0;
     mipsInstruct->addr = -1;
-    return mipsInstruct;
+}
+
+void copyMipsInstruct(decodedInstruct* dest, decodedInstruct* src)
+{
+    dest->rd = src->rd;
+    dest->rt = src->rt;
+    dest->rs = src->rs;
+    dest->imm = src->imm;
+    dest->addr = src->addr;
+
+    dest->instruction = src->instruction;
+    dest->instructType = src->instructType;
 }
 
 void deleteMipsInstruct(decodedInstruct* mipsInstruct)
@@ -49,9 +64,8 @@ int decodeAddr(const char* const addr, const memInstruct* const allInstructs, co
 
 decodedInstruct* instructDecode(const memInstruct* const allInstructs, const int instructLength, const memInstruct* instruct, mipsRegister* mipsReg, dataMemory* dataReg)
 {
-    decodedInstruct* mipsInstruct = initMipsInstruct();
-
-
+    decodedInstruct* mipsInstruct = (decodedInstruct*) malloc(sizeof(decodedInstruct));
+    initMipsInstruct(mipsInstruct);
     mipsInstruct->instructType = instruct->instType;	
 	if(mipsInstruct->instructType == NONETYPE){
 		return mipsInstruct;

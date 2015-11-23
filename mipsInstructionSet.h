@@ -17,7 +17,9 @@
 // ALU
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction);
 int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions instruction);
-void MIPS_MEMORY(int* rt,  int* rs, int* imm, const Instructions instruction, dataMemory* datMem);
+int MIPS_ALU_MEMORY(const int rs, const int imm, int *overflow);
+
+void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataMemory* datMem);
 void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress);
 
 // Arithmetic Operations - Basic arithmetic operations
@@ -51,8 +53,8 @@ void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg);
 void MIPS_JR(int ra, int *nextAddress);
 
 // Load Operations
-void MIPS_SW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
-void MIPS_LW(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem);
+void MIPS_SW(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
+void MIPS_LW(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
 
 // TODO: There are actually a lot of commands I haven't included we'll need to flesh out all of them most likely. -Zach 6 Nov 2015
 

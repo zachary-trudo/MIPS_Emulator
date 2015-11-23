@@ -9,6 +9,8 @@
 #include "mipsInstructionSet.h"
 #include "mipsMemory.h"
 #include "mipsDecode.h"
+#include "mipsStages.h"
+#include "mipsInstructionQueue.h"
 
 #define DATAMEMSIZE 100
 
@@ -43,76 +45,43 @@ int main(int argc, char *argv[])
     initDataMemory(dataReg, DATAMEMSIZE);
 
     // Initialize first instruction to 0
-    int currentAddress  = 0;
-    int nextAddress = 1;
+    int PC = 0;
+
+    instructQueue*  InstructionQueue = (instructQueue*) malloc(sizeof(instructQueue));
+    initQueue(InstructionQueue);
+
     int overflow = 0;
+    int cycles = 0;
 
-    //instructStack   InstructionStack;
-    //initStack(&InstructionStack);
+    int curTime = 0;
 
-    memInstruct* currentInstruct;
-    decodedInstruct* curDecodedInstruct;
-
-    while(currentAddress < instructMemSize)
+    while(PC < instructMemSize - 1)
     {
-       currentInstruct = &instructMem[currentAddress];
-       curDecodedInstruct = instructDecode(instructMem, instructMemSize, currentInstruct, mipsReg, dataReg);
-       if(curDecodedInstruct->instructType == RTYPE)
-       {
-            *curDecodedInstruct->rd = MIPS_ALU(*curDecodedInstruct->rs, *curDecodedInstruct->rt, &overflow, curDecodedInstruct->instruction);
-       }
-       if(curDecodedInstruct->instructType == ITYPE)
-       {
-           if(curDecodedInstruct->instruction == LW || curDecodedInstruct->instruction == SW)
-           {
-               MIPS_MEMORY(curDecodedInstruct->rt, curDecodedInstruct->rs, &curDecodedInstruct->imm, curDecodedInstruct->instruction, dataReg);
-           }
-           else if(curDecodedInstruct->instruction == BEQ || curDecodedInstruct->instruction == BNE)
-           {
-               MIPS_BRANCH(curDecodedInstruct, &nextAddress); 
-           }
-           else
-           {
-               *curDecodedInstruct->rt = MIPS_ALU_IMM(*curDecodedInstruct->rs, curDecodedInstruct->imm, &overflow, curDecodedInstruct->instruction);
-           }
-       }
-       if(curDecodedInstruct->instructType == JTYPE)
-       {
-			if(curDecodedInstruct->instruction == J)
-            {
-					if(curDecodedInstruct->addr > instructMemSize -1)
-                    {
-						printf("mem out of bounds\n");
-						exit(0);
-					}
-		            MIPS_J(curDecodedInstruct->addr, &nextAddress);
-			}
-            else if(curDecodedInstruct->instruction == JR)
-            {
-					
-					MIPS_JR(mipsReg->ra,  &nextAddress);
-			}
-            else if(curDecodedInstruct->instruction == JAL)
-            {
-					MIPS_JAL(curDecodedInstruct->addr, &nextAddress, mipsReg);
-			}
-       }
-       if(curDecodedInstruct->instructType == NONETYPE)
-       {
-           if(currentAddress == instructMemSize - 1)
-           {
-               break;
-           }
-       }
-      
-		currentAddress = nextAddress;
-       nextAddress++;
+        MIPS_WRITEBACK(&InstructionQueue->nodes[5], mipsReg);
+        MIPS_MEMACCESS(&InstructionQueue->nodes[4], mipsReg, dataReg, &instructMemSize);
+        MIPS_EXECUTE(&InstructionQueue->nodes[3], mipsReg, instructMemSize, &PC, &overflow, *InstructionQueue);
+        MIPS_DECODE(&InstructionQueue->nodes[2], mipsReg, dataReg, instructMem, instructMemSize);
+        MIPS_FETCH(&InstructionQueue->nodes[1], instructMem, &PC);
+
+        queue_cycleQueue(InstructionQueue);
+        cycles++;
+        printf("\nPC: %i\nCycles: %i\n", PC, cycles);
+        for(i = 0; i < *getSize(dataReg); i++)
+        {
+            if(dataReg->used[i] == 1)
+                printf("%i : %i\n", i, dataReg->data[i]);
+        }
+        printf("\n");
+
+        curTime = time(0) + 2;
+        while(curTime > time(0));
+
     }
+
     printf("\n");
 
-	printf("v0: %d\n", mipsReg->v0);
 		
-   printf("\n");
+    printf("\n");
     for(i = 0; i < *getSize(dataReg); i++)
     {
         if(dataReg->used[i] == 1)

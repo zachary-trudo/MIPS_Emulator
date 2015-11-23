@@ -1,9 +1,9 @@
 #include "mipsMemory.h"
 
-int data_mem[DATA_MEM_SIZE];
-memInstruct instr_mem[INSTR_MEM_SIZE];
+//int data_mem[DATA_MEM_SIZE];
+//memInstruct instr_mem[INSTR_MEM_SIZE];
 
-int num_labels = 0;
+//int num_labels = 0;
 void initMemInstruct(memInstruct* inst)
 {
     inst->rs = (char*) malloc(sizeof(char) * 4);
@@ -162,21 +162,19 @@ void setData(dataMemory* datMem, int index, int value)
     datMem->used[index] = 1;
 }
 
-void storeData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
+void storeData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
-    int index = *imm + *rs;
-    while(*dataSize <= index)
+    while(*dataSize <= *ALU_RESULT)
     {
         expandDataMemory(dataMem, dataSize);
     }
-    setData(dataMem, index, *rt);
+    setData(dataMem, *ALU_RESULT, *rt);
 }
 
-void loadData(int* rt, int* rs, int* imm, int* dataSize, dataMemory* dataMem)
+void loadData(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
-    int index = *imm + * rs;
-    if(index <= *dataSize)
-        *rt = *(dataMem->data + index);
+    if(*ALU_RESULT <= *dataSize)
+        *MEM_ALU_RESULT = *(dataMem->data + *ALU_RESULT);
 }
 
 int* getDataPointer(char* str, dataMemory* dataMem)

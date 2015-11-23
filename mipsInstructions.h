@@ -36,6 +36,7 @@ typedef enum instructs  {
 } Instructions;
 
 typedef enum instuctType {NONETYPE, RTYPE, ITYPE, JTYPE} InstructionType;
+
 extern const char* instructNames[NUM_OF_INSTRUCTS];
 extern const char* instructTypes[4];
 
