@@ -1,5 +1,3 @@
-// Author:      Zachary A Trudo
-// Changelog:   Initial Creation - Nov 6, 2015
 #ifndef __MIPSINSTRUCTIONSET_H__
 #define __MIPSINSTRUCTIONSET_H__
 #include <stdlib.h>
@@ -8,6 +6,7 @@
 #include "mipsRegisters.h"      // Contains the mipsRegister struct.
 #include "mipsMemory.h"         // Contains how we'll be handling memory.
 #include "mipsDecode.h"
+#include "commonFuncts.h"
 
 #define MAXVALUE 9999999999
 #define MINVALUE -9999999999
@@ -20,7 +19,7 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
 int MIPS_ALU_MEMORY(const int rs, const int imm, int *overflow);
 
 void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataMemory* datMem);
-void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress);
+bool MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress);
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow);
@@ -44,8 +43,8 @@ int MIPS_SLTU(const int rs, const int rt);
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
 // According to mips documentation brach operations use the Subtract functions to do the comparison. 
-void MIPS_BEQ(const int rs, const int rt, const int addr, int *nextInstruction);
-void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction);
+bool MIPS_BEQ(const int rs, const int rt, const int addr, int *nextInstruction);
+bool MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction);
 
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
 void MIPS_J(const int addr, int *nextInstruction);

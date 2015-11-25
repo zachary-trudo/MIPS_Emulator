@@ -1,8 +1,0 @@
-mipsDecode.c: In function ‘decodeAddr’:
-mipsDecode.c:40:32: warning: initialization discards ‘const’ qualifier from pointer target type [enabled by default]
-     memInstruct* instructPtr = allInstructs;
-                                ^
-mipsInstructionQueue.c: In function ‘copyQueueNode’:
-mipsInstructionQueue.c:28:34: warning: assignment from incompatible pointer type [enabled by default]
-         dest->decodedInstruction = (memInstruct*) malloc(sizeof(decodedInstruct));
-                                  ^

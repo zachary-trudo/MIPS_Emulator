@@ -162,6 +162,13 @@ void setData(dataMemory* datMem, int index, int value)
     datMem->used[index] = 1;
 }
 
+int getData(dataMemory* datMem, int index)
+{
+    int retVal = datMem->data[index];
+    datMem->used[index] = 1;
+    return retVal;
+}
+
 void storeData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
     while(*dataSize <= *ALU_RESULT)
@@ -174,7 +181,7 @@ void storeData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 void loadData(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
     if(*ALU_RESULT <= *dataSize)
-        *MEM_ALU_RESULT = *(dataMem->data + *ALU_RESULT);
+        *MEM_ALU_RESULT = getData(dataMem, *ALU_RESULT);
 }
 
 int* getDataPointer(char* str, dataMemory* dataMem)

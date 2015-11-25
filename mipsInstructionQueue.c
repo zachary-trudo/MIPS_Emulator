@@ -10,8 +10,11 @@ void initQueueNode(queueNode* theNode)
 
     theNode->instructMemLocation = 0;
     theNode->ALU_RESULT = 0;
-    
+    theNode->MEM_ALU_RESULT = 0;
+   
+    theNode->jumping = FALSE;
     theNode->waiting = FALSE;
+    theNode->noop = FALSE;
     theNode->stage = NONESTAGE;
 }
 
@@ -30,8 +33,10 @@ void copyQueueNode(queueNode* dest, queueNode* src)
     }
 
     dest->ALU_RESULT = src->ALU_RESULT;
+    dest->MEM_ALU_RESULT = src->MEM_ALU_RESULT;
     dest->instructMemLocation = src->instructMemLocation;
     dest->waiting = src->waiting;
+    dest->noop = src->noop;
     dest->stage = src->stage;
 }
 
@@ -46,6 +51,15 @@ void deleteQueueNode(queueNode* theNode)
         deleteMipsInstruct(theNode->decodedInstruction);
     }
     initQueueNode(theNode);
+}
+
+void clearQueueNode(queueNode* theNode)
+{
+    free(theNode->charInstruct);
+    theNode->charInstruct = (memInstruct*) malloc(sizeof(memInstruct));
+
+    free(theNode->decodedInstruction);
+    theNode->decodedInstruction = (decodedInstruct*) malloc(sizeof(decodedInstruct*));
 }
 
 void initQueue(instructQueue* theQueue)
@@ -69,6 +83,11 @@ void deleteQueue(instructQueue* theQueue)
     free(theQueue);
 }
 
+void noopNodes(instructQueue* theQueue, int index)
+{
+    theQueue->nodes[index].decodedInstruction->instructType = NONETYPE;
+    theQueue->nodes[index].decodedInstruction->instruction = NONE;
+}
 
 void queue_popBack(instructQueue* theQueue)
 {
@@ -82,7 +101,7 @@ void queue_popBack(instructQueue* theQueue)
 void queue_cycleQueue(instructQueue* theQueue)
 {
     int i = STACKSIZE - 1;
- 
+
     for(i; i > 0; i--)
     {
         if(theQueue->nodes[i].waiting)
@@ -91,14 +110,11 @@ void queue_cycleQueue(instructQueue* theQueue)
             // Currently I'm assuming that as soon as we wait, we wait for the rest of the queue.
             // Doing it this way we'll be able to mitigate any conflicts pretty easily. 
             theQueue->nodes[i].waiting = FALSE;
+            clearQueueNode(&theQueue->nodes[i+1]);
             break;
         }
-
-        printf("\n\nPrevious Stage: %i, i: %i\n", theQueue->nodes[i-1].stage, i);
         copyQueueNode(&theQueue->nodes[i], &theQueue->nodes[i-1]);
-        printf("Current Stage: %i, i: %i\n", theQueue->nodes[i].stage, i);
         theQueue->nodes[i].stage = i;
-        printf("Current Stage: %i\n\n", theQueue->nodes[i].stage);
     }
 
     if (i == 0)
@@ -109,19 +125,21 @@ void queue_cycleQueue(instructQueue* theQueue)
 
 bool noDependencies(queueNode* curNode, instructQueue queue)
 {
-    int* curPointers[3] = {curNode->decodedInstruction->rt, curNode->decodedInstruction->rd, curNode->decodedInstruction->rs};
-    int* queuePointers[3] = {queue.nodes[MEMORY].decodedInstruction->rt, queue.nodes[MEMORY].decodedInstruction->rd, queue.nodes[MEMORY].decodedInstruction->rs};
-    int i, j;
     bool retVal = TRUE;
-
-    for(i = 0; i < 3; i++)
+    if(curNode->decodedInstruction && queue.nodes[MEMORY].decodedInstruction)
     {
-        for(j = 0; j < 3; j++)
+        int* curPointers[3] = {curNode->decodedInstruction->rt, curNode->decodedInstruction->rd, curNode->decodedInstruction->rs};
+        int* queuePointers[3] = {queue.nodes[MEMORY].decodedInstruction->rt, queue.nodes[MEMORY].decodedInstruction->rd, queue.nodes[MEMORY].decodedInstruction->rs};
+        int i, j;
+        for(i = 0; i < 3; i++)
         {
-            if(curPointers[i] == queuePointers[j])
+            for(j = 0; j < 3; j++)
             {
-                retVal = FALSE;
-                break;
+                if(curPointers[i] != 0 && curPointers[i] == queuePointers[j])
+                {
+                    retVal = FALSE;
+                    break;
+                }
             }
         }
     }

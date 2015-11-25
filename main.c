@@ -1,5 +1,3 @@
-// Author:      Zachary A Trudo
-// Changelog:   Initial Creation - Nov 6, 2015
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -60,8 +58,11 @@ int main(int argc, char *argv[])
         MIPS_WRITEBACK(&InstructionQueue->nodes[5], mipsReg);
         MIPS_MEMACCESS(&InstructionQueue->nodes[4], mipsReg, dataReg, &instructMemSize);
         MIPS_EXECUTE(&InstructionQueue->nodes[3], mipsReg, instructMemSize, &PC, &overflow, *InstructionQueue);
-        MIPS_DECODE(&InstructionQueue->nodes[2], mipsReg, dataReg, instructMem, instructMemSize);
-        MIPS_FETCH(&InstructionQueue->nodes[1], instructMem, &PC);
+        //if(!MIPS_HANDLEJUMPS(InstructionQueue))
+        //{
+            MIPS_DECODE(&InstructionQueue->nodes[2], mipsReg, dataReg, instructMem, instructMemSize);
+            MIPS_FETCH(&InstructionQueue->nodes[1], instructMem, &PC);
+        //}
 
         queue_cycleQueue(InstructionQueue);
         cycles++;
@@ -71,16 +72,11 @@ int main(int argc, char *argv[])
             if(dataReg->used[i] == 1)
                 printf("%i : %i\n", i, dataReg->data[i]);
         }
+        printRegister(mipsReg);
         printf("\n");
 
-        curTime = time(0) + 2;
-        while(curTime > time(0));
-
+        curTime = time(0) + 1;
     }
-
-    printf("\n");
-
-		
     printf("\n");
     for(i = 0; i < *getSize(dataReg); i++)
     {

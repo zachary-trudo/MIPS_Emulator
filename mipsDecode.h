@@ -1,5 +1,3 @@
-// Author:      Zachary A Trudo
-// Changelog:   Initial Creation - Nov 6, 2015
 #ifndef __MIPSDECODE_H__
 #define __MIPSDECODE_H__
 
@@ -12,6 +10,8 @@ typedef struct decoded
 
     Instructions instruction;
     InstructionType instructType;
+
+    // We use pointers to registers. 
     int *rd;
     int *rt;
     int *rs;

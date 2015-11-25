@@ -1,5 +1,3 @@
-// Author:          Zachary A Trudo
-// Changelog:       Initial Creation - Nov 6, 2015
 #ifndef __MIPSMEMORY_H__
 #define __MIPSMEMORY_H__
 
@@ -44,7 +42,7 @@ void expandDataMemory(dataMemory* oldDataMemory, int* size);
 void deleteDataMemory(dataMemory* datMem);
 
 void storeData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
-void loadData(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
+void loadData(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem);
 
 int* getDataPointer(char* str, dataMemory* datMem);
 int* getSize(dataMemory* datMem);

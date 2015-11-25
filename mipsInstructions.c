@@ -91,8 +91,6 @@ void charToUpper(char* const str)
     }
 }
 
-
-
 // Returns the type of the instruction.
 InstructionType getInstructionType(const Instructions instruct)
 {

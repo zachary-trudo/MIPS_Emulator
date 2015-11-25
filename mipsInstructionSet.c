@@ -104,16 +104,18 @@ void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataM
     }
 }
 
-void MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
+bool MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
 {
+    bool retVal = FALSE;
     if(curInstruct->instruction == BEQ)
     {
-        MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+        retVal = MIPS_BEQ(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
     }
     else if(curInstruct->instruction == BNE)
     {
-        MIPS_BNE(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
+        retVal = MIPS_BNE(*curInstruct->rs, *curInstruct->rt, curInstruct->addr, nextAddress);
     }
+    return retVal;
 }
 
 
@@ -201,27 +203,31 @@ int MIPS_SLT(const int rs, const int rt)
 int MIPS_SLTU(const int rs, const int rt)
 {
     int retVal = rs < rt;
-    //printf("%i  %i = %i", rs, rt, retVal);
+    printf("%i  %i = %i", rs, rt, retVal);
     return retVal;
 }
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
 // According to mips documentation brach operations use the Subtract functions to do the comparison. 
-void MIPS_BEQ(const int rs, const const int rt, const int addr, int *nextInstruction)
+bool MIPS_BEQ(const int rs, const const int rt, const int addr, int *nextInstruction)
 {
-    if (MIPS_SUBU(rs, rt) == 0)
+    bool retVal = MIPS_SUBU(rs, rt) == 0; 
+    if (retVal)
     {
         MIPS_J(addr, nextInstruction);
     }
+    return retVal;
 }
 
 
-void MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
+bool MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 {
-    if (MIPS_SUBU(rs, rt) != 0)
+    bool retVal = MIPS_SUBU(rs, rt) != 0;
+    if (retVal)
     {
         MIPS_J(addr, nextInstruction);
     }
+    return retVal;
 }
 
 // Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
@@ -247,6 +253,7 @@ void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
 void MIPS_LW(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
     loadData(MEM_ALU_RESULT, ALU_RESULT, dataSize, dataMem);
+    printf("THE NUMBER LOADED: %i", *MEM_ALU_RESULT);
 }
 
 // imm = index, rs = addr, size = size, rt = storeValue

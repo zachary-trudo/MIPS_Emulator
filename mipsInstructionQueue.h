@@ -25,7 +25,8 @@ typedef struct instQueueNode {
     int instructMemLocation, ALU_RESULT, MEM_ALU_RESULT;
     memInstruct* charInstruct;
     decodedInstruct* decodedInstruction;
-    bool waiting;
+    bool waiting, jumping;
+    bool noop;
     STAGES stage;
 } queueNode; 
 
@@ -41,6 +42,7 @@ typedef struct instructionQueue
 
 void initQueue(instructQueue* theQueue);
 void deleteQueue(instructQueue* theQueue);
+void noopNodes(instructQueue* theQueue, int index);
 
 bool noDepenedencies(queueNode* curNode, instructQueue queue, STAGES stage); 
 #endif

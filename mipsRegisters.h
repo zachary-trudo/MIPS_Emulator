@@ -1,11 +1,7 @@
-// Author:          Zachary A Trudo
-// Changelog:       Initial Creation - Nov, 6 2015
 #ifndef __MIPSREGISTERS_H__
 #define __MIPSREGISTERS_H__
 #include <stdlib.h>
 #include <stdio.h>
-
-
 
 // While mips registers could be easily represented as an array of 32 ints, this way we can 
 // reference them in a similar fasion to how they would be referenced in assembly.
@@ -14,7 +10,7 @@ struct registers
     // Zero is always zero.
     int zero;
 
-    // Aseembler Temporary
+    // Assembler Temporary
     int at;
 
     // Function Result Registers
@@ -28,7 +24,7 @@ struct registers
     int a3;
 
     // Temporary Registers - Supposed to be 0'd after use
-    // Not sure if we'll be bothering with zeroing.
+    // We ended up deciding not to bother with Zeroing.
     int t0;
     int t1;
     int t2;
@@ -49,7 +45,6 @@ struct registers
     int s5;
     int s6;
     int s7;
-    //int s8;
 
     // Kernal Registers - Unused
     int k0;
@@ -62,11 +57,13 @@ struct registers
     int sp;
 	
 	int fp;
+
     // Return Address
     int ra;
 };
 typedef struct registers mipsRegister;
 
+void printRegister(mipsRegister* mipsReg);
 void initRegister(mipsRegister* mipsReg);
 char* registerList[32];
 int* getPointerToRegister(char* const desiredReg, mipsRegister* mipsReg);
