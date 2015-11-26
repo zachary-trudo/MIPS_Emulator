@@ -1,5 +1,8 @@
 #include "mipsInstructionQueue.h"
 
+// Initializes a node.
+// FIXME: We need to go through and check our initialization and construction of nodes.
+// I think we've got memory leaks here. --Zach
 void initQueueNode(queueNode* theNode)
 {
     theNode->charInstruct = (memInstruct*) malloc(sizeof(memInstruct));
@@ -15,9 +18,18 @@ void initQueueNode(queueNode* theNode)
     theNode->jumping = FALSE;
     theNode->waiting = FALSE;
     theNode->noop = FALSE;
-    theNode->stage = NONESTAGE;
+    theNode->stage = FETCH;
 }
 
+// This prints out some useful information for tracking issues.
+// Should be turned off in final iteration.
+void printNode(queueNode* theNode)
+{
+    printf("\n");
+    printf("MemAddress: %i, Stage: %i, Jumping: %i, NOOP: %i", theNode->instructMemLocation, theNode->stage, theNode->jumping, theNode->noop);
+}
+
+// Deep copy a node creating new memory. 
 void copyQueueNode(queueNode* dest, queueNode* src)
 {
     if(src->charInstruct)
@@ -38,8 +50,10 @@ void copyQueueNode(queueNode* dest, queueNode* src)
     dest->waiting = src->waiting;
     dest->noop = src->noop;
     dest->stage = src->stage;
+    dest->jumping = src->jumping;
 }
 
+// Deletes a node. 
 void deleteQueueNode(queueNode* theNode)
 {
     if(theNode->charInstruct)
@@ -53,6 +67,7 @@ void deleteQueueNode(queueNode* theNode)
     initQueueNode(theNode);
 }
 
+// Clears a node of all contents. 
 void clearQueueNode(queueNode* theNode)
 {
     free(theNode->charInstruct);
@@ -62,6 +77,7 @@ void clearQueueNode(queueNode* theNode)
     theNode->decodedInstruction = (decodedInstruct*) malloc(sizeof(decodedInstruct*));
 }
 
+// Initializes a queue.
 void initQueue(instructQueue* theQueue)
 {
     int i;
@@ -72,6 +88,7 @@ void initQueue(instructQueue* theQueue)
     }
 }
 
+// Deletes a queue.
 void deleteQueue(instructQueue* theQueue)
 {
     int i;
@@ -83,21 +100,21 @@ void deleteQueue(instructQueue* theQueue)
     free(theQueue);
 }
 
+// Simple function for nooping. 
 void noopNodes(instructQueue* theQueue, int index)
 {
-    theQueue->nodes[index].decodedInstruction->instructType = NONETYPE;
-    theQueue->nodes[index].decodedInstruction->instruction = NONE;
+    theQueue->nodes[index].noop = TRUE;
 }
 
+// Unused function... originally we were going to go with a linked list.
+// Pershaps we should have stuck with that. 
 void queue_popBack(instructQueue* theQueue)
 {
     deleteQueueNode(&theQueue->nodes[STACKSIZE - 1]);
 }
 
-
-// TODO: Currently all instructions go through the entire queue... Obviously that isn't what we want.
-// We'll need to redisign the instructions so that they know their path and can jump around. This will
-// complicate this function considerably, and require a significant rewrite to major sections of our code.
+// This function cycles the queue up until a wait.
+// It also initializes the 0 node if its going to be needed.
 void queue_cycleQueue(instructQueue* theQueue)
 {
     int i = STACKSIZE - 1;
@@ -106,15 +123,12 @@ void queue_cycleQueue(instructQueue* theQueue)
     {
         if(theQueue->nodes[i].waiting)
         {
-            // FIXME: May not actually need to be fixed, remove notification when a direction is decided.
-            // Currently I'm assuming that as soon as we wait, we wait for the rest of the queue.
-            // Doing it this way we'll be able to mitigate any conflicts pretty easily. 
             theQueue->nodes[i].waiting = FALSE;
             clearQueueNode(&theQueue->nodes[i+1]);
+            printf("\nWaiting\n");
             break;
         }
         copyQueueNode(&theQueue->nodes[i], &theQueue->nodes[i-1]);
-        theQueue->nodes[i].stage = i;
     }
 
     if (i == 0)
@@ -123,6 +137,9 @@ void queue_cycleQueue(instructQueue* theQueue)
     }
 }
 
+// Checks for depenedencies. 
+// FIXME: This function may not be operating correctly and may be why Fibbonnoci is not working.
+// Take a look into it. --Zach 
 bool noDependencies(queueNode* curNode, instructQueue queue)
 {
     bool retVal = TRUE;

@@ -1,11 +1,9 @@
-// Author:      Zachary A Trudo
-// Change Log:  Initial Commit - Nov 6, 2015
-//              Fleshed out all the instructions - Nov 7, 2015
 #include <stdio.h>
 #include "mipsInstructionSet.h"
 
 
-// Mips ALU, should work.
+// Mips ALU, handles all RTYPE functions.
+// FIXME: Combining the ALU's should allow us to decrease the amount of logic in the MIPS_EXECUTE function. 
 int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instruction)
 {
     int returnVal = 0;
@@ -52,6 +50,8 @@ int MIPS_ALU(const int rs, const int rt, int *overflow, const Instructions instr
     return returnVal;
 }
 
+// MIPS ALU_IMM, handles all Immediate type functions that are not LW or SW or BNE or BEQ
+// FIXME: Investigate combining this with MIPS_ALU... we may not need this division
 int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions instruction)
 {
     int returnVal = 0;
@@ -80,12 +80,14 @@ int MIPS_ALU_IMM(const int rs, const int rt, int *overflow, const Instructions i
     return returnVal;
 }
 
+// MIPS_ALU_MEMORY is just a wrapper for memory ALU use. 
+// FIXME: Investigate combining this with MIPS_ALU_IMM. Its just a ADDI... could be a new switch statement.
 int MIPS_ALU_MEMORY(const int rs, const int imm, int *overflow)
 {
     return MIPS_ALU_IMM(rs, imm, overflow, ADDI);
 }
 
-
+// MIPS_MEMORY handles the memory operations. 
 void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataMemory* datMem)
 {
     int* dataSize = getSize(datMem);
@@ -98,12 +100,14 @@ void MIPS_MEMORY(int* rt, int* ALU_RESULT, const Instructions instruction, dataM
             MIPS_LW(rt, ALU_RESULT, dataSize, datMem);
             break;
         default:
-            printf("Something went terribly wrong. Should be impossible to get here.");
+            printf("Something went terribly wrong. You've tried to MIPS_MEMORY something other than SW or LW.");
             exit(1);
             break;
     }
 }
 
+// MIPS_BRANCH returns true if we branched, false otherwise. 
+// This is important because it will trip the "jumping" flag.
 bool MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
 {
     bool retVal = FALSE;
@@ -117,8 +121,6 @@ bool MIPS_BRANCH(decodedInstruct* curInstruct, int* nextAddress)
     }
     return retVal;
 }
-
-
 
 // Arithmetic Operations - Basic arithmetic operations
 int MIPS_ADD(const int rs, const int rt, int *overflow)
@@ -208,7 +210,7 @@ int MIPS_SLTU(const int rs, const int rt)
 }
 
 // Branch Operations - Should make basic comparison, and then pass the jump to (MIPS_J) if we really need to jump. 
-// According to mips documentation brach operations use the Subtract functions to do the comparison. 
+// According to mips documentation brach operations use the Subtract functions to do the comparison. So thats what we've done here. 
 bool MIPS_BEQ(const int rs, const const int rt, const int addr, int *nextInstruction)
 {
     bool retVal = MIPS_SUBU(rs, rt) == 0; 
@@ -218,7 +220,6 @@ bool MIPS_BEQ(const int rs, const const int rt, const int addr, int *nextInstruc
     }
     return retVal;
 }
-
 
 bool MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
 {
@@ -230,7 +231,9 @@ bool MIPS_BNE(const int rs, const int rt, const int addr, int *nextInstruction)
     return retVal;
 }
 
-// Jump Operations - I think we should have a "Next Instruction" global. This could just change where it is pointing to. 
+// Jump Operations. 
+// FIXME: We no longer have the nextAddress variable and now rely on the PC variable. 
+// These jump instructions could be updated to reflect that. 
 void MIPS_J(int addr, int *nextAddress)
 {
     *nextAddress = addr;
@@ -249,14 +252,12 @@ void MIPS_JAL(int addr, int *nextAddress, mipsRegister * mipsReg){
 
 // Load Operations
 
-// imm = index * 4, rs = addr
 void MIPS_LW(int* MEM_ALU_RESULT, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
     loadData(MEM_ALU_RESULT, ALU_RESULT, dataSize, dataMem);
     printf("THE NUMBER LOADED: %i", *MEM_ALU_RESULT);
 }
 
-// imm = index, rs = addr, size = size, rt = storeValue
 void MIPS_SW(int* rt, int* ALU_RESULT, int* dataSize, dataMemory* dataMem)
 {
     storeData(rt, ALU_RESULT, dataSize, dataMem);

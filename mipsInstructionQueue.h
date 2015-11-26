@@ -31,6 +31,7 @@ typedef struct instQueueNode {
 } queueNode; 
 
 void initQueueNode(queueNode* theNode);
+void printQueueNode(queueNode* theNode);
 void deleteQueueNode(queueNode* theNode);
 
 // TODO: This struct may end up being unneeded. We'll see. 

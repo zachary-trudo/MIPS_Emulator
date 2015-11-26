@@ -1,5 +1,6 @@
 #include "mipsInstructions.h"
 
+// Char representation of each instruction.
 const char* instructNames[NUM_OF_INSTRUCTS] = {
     "NONE",                                                         // 1 NONE (0)
 	//Arithmetic RTYPE
@@ -31,12 +32,15 @@ const char* instructNames[NUM_OF_INSTRUCTS] = {
 
 const char* instructTypes[4] = {"NONETYPE", "RTYPE", "ITYPE", "JTYPE" };
 
+// struct for the mapping. 
 struct instructTypeMap 
 {
     Instructions instruct;
     InstructionType type;
 };
 
+// Simple mapping for each and every instruction. 
+// Originally we were doing some other maping. It was bad. 
 struct instructTypeMap instructTypeDict[] =
 {
     NONE, NONETYPE,

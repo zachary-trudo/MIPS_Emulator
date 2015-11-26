@@ -10,6 +10,10 @@
 #include "mipsStages.h"
 #include "mipsInstructionQueue.h"
 
+#define INFILEARG 1
+#define OUTFILEARG 2
+
+#define INSTRUCTMEMSIZE 200
 #define DATAMEMSIZE 100
 
 int main(int argc, char *argv[])
@@ -18,21 +22,38 @@ int main(int argc, char *argv[])
     FILE *infp, *outfp;
     int i = 0;
     
-    if(argv[1])
-        infp = fopen(argv[1], "r");
+    if(argv[INFILEARG])
+    {
+        infp = fopen(argv[INFILEARG], "r");
+    }
 
     if(infp == NULL)
-        printf("Didn't get the damn file\n");
+    {
+        printf("Didn't get the file\nQuitting\n\n");
+        exit(1919); // Cool code for "Exit without getting file." 
+    }
 
-    if(argv[2])
-      outfp = fopen(argv[2], "w");
+    if(argv[OUTFILEARG])
+    {
+      outfp = fopen(argv[OUTFILEARG], "w");
+    }
     else
+    {
       outfp = fopen("out.txt", "w");
-    memInstruct instructMem[1024];
+    }
+
+    memInstruct instructMem[INSTRUCTMEMSIZE];
     int instructMemSize = 0;
+
+    char response;
+    printf("\n\nWould you like to use stepMode? (Y or N)");
+    response = getchar();
+    charToUpper(&response);
 
     parseFile(infp, instructMem, &instructMemSize);
     writeFile(outfp, instructMem, instructMemSize);
+    close(infp);
+    close(outfp);
 
     // Initialize all registers to 0.
     mipsRegister* mipsReg = (mipsRegister*) malloc(sizeof(mipsRegister));
@@ -45,6 +66,8 @@ int main(int argc, char *argv[])
     // Initialize first instruction to 0
     int PC = 0;
 
+
+    // Initialize the Queue.
     instructQueue*  InstructionQueue = (instructQueue*) malloc(sizeof(instructQueue));
     initQueue(InstructionQueue);
 
@@ -53,40 +76,46 @@ int main(int argc, char *argv[])
 
     int curTime = 0;
 
+    // Where all the magic happens. 
     while(PC < instructMemSize - 1)
     {
-        MIPS_WRITEBACK(&InstructionQueue->nodes[5], mipsReg);
-        MIPS_MEMACCESS(&InstructionQueue->nodes[4], mipsReg, dataReg, &instructMemSize);
-        MIPS_EXECUTE(&InstructionQueue->nodes[3], mipsReg, instructMemSize, &PC, &overflow, *InstructionQueue);
-        //if(!MIPS_HANDLEJUMPS(InstructionQueue))
-        //{
-            MIPS_DECODE(&InstructionQueue->nodes[2], mipsReg, dataReg, instructMem, instructMemSize);
-            MIPS_FETCH(&InstructionQueue->nodes[1], instructMem, &PC);
-        //}
+        MIPS_WRITEBACK(&InstructionQueue->nodes[WRITEBACK], mipsReg);
+        MIPS_MEMACCESS(&InstructionQueue->nodes[MEMORY], mipsReg, dataReg, &instructMemSize);
+        MIPS_EXECUTE(&InstructionQueue->nodes[EXECUTE], mipsReg, instructMemSize, &PC, &overflow, *InstructionQueue);
+        MIPS_HANDLEJUMPS(InstructionQueue);
+        MIPS_DECODE(&InstructionQueue->nodes[DECODE], mipsReg, dataReg, instructMem, instructMemSize);
+        MIPS_FETCH(&InstructionQueue->nodes[FETCH], instructMem, &PC);
+
+        printNode(&InstructionQueue->nodes[WRITEBACK]);
+        printNode(&InstructionQueue->nodes[MEMORY]);
+        printNode(&InstructionQueue->nodes[EXECUTE]);
+        printNode(&InstructionQueue->nodes[DECODE]);
+        printNode(&InstructionQueue->nodes[FETCH]);
+        printNode(&InstructionQueue->nodes[NONESTAGE]);
 
         queue_cycleQueue(InstructionQueue);
         cycles++;
+
+
         printf("\nPC: %i\nCycles: %i\n", PC, cycles);
         for(i = 0; i < *getSize(dataReg); i++)
         {
-            if(dataReg->used[i] == 1)
+            if(dataReg->used[i] == TRUE)
                 printf("%i : %i\n", i, dataReg->data[i]);
         }
         printRegister(mipsReg);
         printf("\n");
 
-        curTime = time(0) + 1;
+        //curTime = time(0) + 10;
+        //while(curTime > time(0) && PC == 35);
+        while(response == 'Y' && getchar() != '\n');
     }
-    printf("\n");
-    for(i = 0; i < *getSize(dataReg); i++)
-    {
-        if(dataReg->used[i] == 1)
-            printf("%i : %i\n", i, dataReg->data[i]);
-    }
-    printf("\n");
+
+    // Cleanup InstructMem
     for(i = instructMemSize-1; i >= 0; i--)
+    {
         deleteMemInstructOnStack(&instructMem[i]);
-   	close(infp);
-    close(outfp);
+    }
+    // Close our files.
     return 0;
 }

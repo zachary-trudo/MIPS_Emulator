@@ -1,5 +1,14 @@
 #include "mipsParseFile.h"
 
+// We have a set of very specific functions for parsing. 
+// We need to make the text as uniform as possible:
+// Stripping leading whitespace
+// stpipping unneccessary characters
+// Converting all remaining whitespace to single spaces.
+// Ignoring comments. 
+// These are all methods we use to fix it. 
+
+
 void stripLeadingWhiteSpace(char *str)
 {
     char *beg = str;
@@ -102,6 +111,10 @@ int numberOfWords(char* str)
 
 
 // Parse the file into instruction and data memory.
+// FIXME: This function is incredibly large. 
+// We should look into cutting it down. 
+// An obvious split would be one function for cleaning up all the text, and another for the actual parsing.
+// --Zach
 void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
 {
     memInstruct *memPtr = &(instructMem[0]);
@@ -255,6 +268,7 @@ void parseFile(FILE* infp, memInstruct* const instructMem, int* instructMemSize)
 }
 
 // For debugging... Write out what we thought we got into a file. 
+// FIXME: No idea why, but this function is no longer printing to the file. No time currently to look into it. --Zach
 void writeFile(FILE* const outfp, memInstruct* const instructMem, const int instructMemSize)
 {
     memInstruct *memPtr = instructMem;

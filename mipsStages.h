@@ -14,5 +14,5 @@ void MIPS_EXECUTE(queueNode* currentNode, mipsRegister* mipsReg, int instructMem
 void MIPS_MEMACCESS(queueNode* currentNode, mipsRegister* mipsReg, dataMemory* dataReg, int* dataSize);
 void MIPS_WRITEBACK(queueNode* currentNode, mipsRegister* mipsReg);
 
-bool MIPS_HANDLEJUMPS(instructQueue* theQueue);
+void MIPS_HANDLEJUMPS(instructQueue* theQueue);
 #endif

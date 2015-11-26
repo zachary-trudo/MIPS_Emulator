@@ -1,9 +1,6 @@
 #include "mipsMemory.h"
 
-//int data_mem[DATA_MEM_SIZE];
-//memInstruct instr_mem[INSTR_MEM_SIZE];
-
-//int num_labels = 0;
+// Initialization for instruction Memory. 
 void initMemInstruct(memInstruct* inst)
 {
     inst->rs = (char*) malloc(sizeof(char) * 4);
@@ -28,6 +25,10 @@ void initMemInstruct(memInstruct* inst)
     inst->instr    = NONE;
 }
 
+// Delete of same instruction memory. 
+// FIXME: We rely on conditionally branching based on items that may or 
+// may not have been initialized before freeing. I don't know how this is 
+// supposed to be done in C, it works for now though. 
 void deleteMemInstruct(memInstruct* inst)
 {
     if(inst->rs)
@@ -51,6 +52,8 @@ void deleteMemInstruct(memInstruct* inst)
     free(inst);
 }
 
+// I'm not sure that this is still used. May be a holdover from an earlier iteration.
+// FIXME: Investigate if this function is used. If not remove. 
 void deleteMemInstructOnStack(memInstruct* inst)
 {
     if(inst->rs)
